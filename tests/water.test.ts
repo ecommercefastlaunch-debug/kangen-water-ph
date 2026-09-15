@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { describe, expect, it } from "vitest";
-import { photoOutletPoint } from "@/components/experience/scene/PhotoSubject";
+import { PhotoSubject, photoOutletPoint } from "@/components/experience/scene/PhotoSubject";
 import { WaterStream } from "@/components/experience/scene/WaterStream";
 import { beatsFor, chapters } from "@/lib/experience-chapters";
 import { POSES } from "@/lib/experience-poses";
@@ -77,14 +77,69 @@ describe("WaterStream", () => {
     expect(stream.active).toBe(false);
     expect(stream.mesh.visible).toBe(false);
   });
+
+  it("breaks off cleanly when the nozzle jumps to the other view", () => {
+    const stream = new WaterStream(SCENE_CONFIG.water, 8, true);
+    const front = new THREE.Vector3(100, -600, 0);
+    run(stream, 0.6, front);
+    stream.cut();
+    const angled = new THREE.Vector3(260, -640, 0);
+    run(stream, 0.3, angled);
+    // New water leaves the new nozzle…
+    expect(stream.pointAt(0, new THREE.Vector3()).distanceTo(angled)).toBe(0);
+    // …and no tube joins it to the old water still falling from where the old nozzle was.
+    const p = new THREE.Vector3();
+    const q = new THREE.Vector3();
+    let gaps = 0;
+    for (let i = 0; i < stream.pointCount - 1; i++) {
+      stream.pointAt(i, p);
+      stream.pointAt(i + 1, q);
+      if (Math.abs(p.x - q.x) > 20) {
+        gaps++;
+        expect(stream.joined(i)).toBe(false);
+      }
+    }
+    expect(gaps).toBe(1);
+  });
+
+  it("clears at once when the view switches while paused", () => {
+    const stream = new WaterStream(SCENE_CONFIG.water, 8, true);
+    run(stream, 0.6, new THREE.Vector3(0, 0, 0));
+    stream.clear();
+    stream.update(0, new THREE.Vector3(200, 0, 0), down, WPM, 1, view, FLOOR);
+    expect(stream.pointCount).toBe(0);
+    expect(stream.mesh.visible).toBe(false);
+  });
 });
 
 describe("photo outlet calibration", () => {
-  it("maps the nozzle to the same place the page image puts it", () => {
+  it("maps each nozzle to the same place the page image puts it", () => {
     const frame = { cx: 760, cy: 495, size: 490 };
-    const p = photoOutletPoint(frame, POSES.intro.wide);
-    expect(p.x).toBeCloseTo(760 + (SCENE_CONFIG.photo.outlet.u - 0.5) * 490, 5);
-    expect(p.y).toBeCloseTo(495 + (SCENE_CONFIG.photo.outlet.v - 0.5) * 490, 5);
+    for (const { outlet } of Object.values(SCENE_CONFIG.photo.views)) {
+      const p = photoOutletPoint(frame, POSES.intro.wide, outlet);
+      expect(p.x).toBeCloseTo(760 + (outlet.u - 0.5) * 490, 5);
+      expect(p.y).toBeCloseTo(495 + (outlet.v - 0.5) * 490, 5);
+    }
+  });
+
+  it("attaches the water to whichever photograph is showing", () => {
+    const { front, angle } = SCENE_CONFIG.photo.views;
+    const subject = new PhotoSubject(new THREE.Texture());
+    const at = () => subject.outlet.position;
+    // No angled photograph yet: the front one stays, whatever the story asks for.
+    subject.setView(1);
+    expect(at().x).toBeCloseTo(front.outlet.u - 0.5);
+    expect(subject.outletEpoch).toBe(0);
+
+    subject.setAngle(new THREE.Texture());
+    expect(at().x).toBeCloseTo(angle.outlet.u - 0.5);
+    expect(at().y).toBeCloseTo(0.5 - angle.outlet.v);
+    expect(subject.outletEpoch).toBe(1);
+
+    subject.setView(0.3);
+    expect(at().x).toBeCloseTo(front.outlet.u - 0.5);
+    expect(subject.outletEpoch).toBe(2);
+    subject.dispose();
   });
 });
 

@@ -77,6 +77,8 @@ export class WaterStream {
   private readonly age: Float32Array;
   private readonly born: Float32Array;
   private readonly thick: Float32Array;
+  /** 1 = the first parcel of a run of water: never joined to the older water below it. */
+  private readonly brk: Uint8Array;
   private start = 0;
   private count = 0;
 
@@ -86,6 +88,7 @@ export class WaterStream {
   private readonly cz: Float32Array;
   private readonly cr: Float32Array;
   private readonly cv: Float32Array;
+  private readonly cb: Uint8Array;
   private points = 0;
 
   private readonly positions: Float32Array;
@@ -96,6 +99,7 @@ export class WaterStream {
   private level = 0;
   private time = 0;
   private emitting = false;
+  private newRun = true;
 
   private readonly t = new THREE.Vector3();
   private readonly side = new THREE.Vector3();
@@ -117,6 +121,7 @@ export class WaterStream {
     this.age = new Float32Array(m);
     this.born = new Float32Array(m);
     this.thick = new Float32Array(m);
+    this.brk = new Uint8Array(m);
 
     const pts = m + 1;
     this.cx = new Float32Array(pts);
@@ -124,6 +129,7 @@ export class WaterStream {
     this.cz = new Float32Array(pts);
     this.cr = new Float32Array(pts);
     this.cv = new Float32Array(pts);
+    this.cb = new Uint8Array(pts);
 
     const verts = pts * radialSegments;
     this.positions = new Float32Array(verts * 3);
@@ -183,6 +189,33 @@ export class WaterStream {
   /** Centre-line point `i` (0 = at the nozzle while flowing). */
   pointAt(i: number, out: THREE.Vector3): THREE.Vector3 {
     return out.set(this.cx[i], this.cy[i], this.cz[i]);
+  }
+
+  /** Whether the tube is drawn between centre-line points `i` and `i + 1`. */
+  joined(i: number): boolean {
+    return this.cr[i] > 0 || this.cr[i + 1] > 0;
+  }
+
+  /**
+   * The outlet has moved somewhere else at once — the stage switched to the
+   * other product view. Stop emitting immediately, so the stream detaches
+   * from the old nozzle and falls away; the next run starts fresh at the new
+   * one and is never joined to the water still falling.
+   */
+  cut(): void {
+    this.level = 0;
+    this.emitting = false;
+    this.acc = 0;
+    this.newRun = true;
+  }
+
+  /** Remove all water — for a view switch while paused, when nothing may fall. */
+  clear(): void {
+    this.cut();
+    this.count = 0;
+    this.points = 0;
+    this.mesh.visible = false;
+    this.mesh.geometry.setDrawRange(0, 0);
   }
 
   /** While paused, keep the frozen stream on the nozzle by carrying it along. */
@@ -256,9 +289,12 @@ export class WaterStream {
           this.age[i] = sub;
           this.born[i] = this.time - sub;
           this.thick[i] = Math.min(1, this.level);
+          this.brk[i] = this.newRun ? 1 : 0;
+          this.newRun = false;
         }
       } else {
         this.acc = 0;
+        this.newRun = true;
       }
 
       // Retire the oldest parcels once they have left the stage.
@@ -284,6 +320,7 @@ export class WaterStream {
       this.cz[n] = outlet.z;
       this.cr[n] = this.thick[newest];
       this.cv[n] = this.time;
+      this.cb[n] = 0;
       n++;
     }
     for (let k = 0; k < this.count; k++) {
@@ -295,7 +332,15 @@ export class WaterStream {
       // Accelerating water thins out (continuity: r ∝ 1/√v).
       this.cr[n] = this.thick[i] * Math.sqrt(v0 / Math.max(v0, speed));
       this.cv[n] = this.born[i];
+      this.cb[n] = this.brk[i];
       n++;
+    }
+    // Between two runs of water, taper both ends to nothing so no tube bridges the gap.
+    for (let p = 0; p < n - 1; p++) {
+      if (this.cb[p]) {
+        this.cr[p] = 0;
+        this.cr[p + 1] = 0;
+      }
     }
     this.points = n;
 

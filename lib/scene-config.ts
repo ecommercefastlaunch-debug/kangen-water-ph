@@ -56,18 +56,27 @@ export const SCENE_CONFIG = {
   },
 
   photo: {
-    /** The approved K8 photograph with a transparent ground (built from public/images/k8-stage.png). */
-    src: "/images/k8-stage-alpha.png",
-    /** Served through the Next.js image optimiser (quality must be in next.config's allowed list). */
-    texture: "/_next/image?url=%2Fimages%2Fk8-stage-alpha.png&w=1920&q=75",
     /**
-     * The flexible pipe's nozzle opening, as fractions of the image box
-     * (0,0 top-left): the lowest point of the pipe, measured from the
-     * image's alpha channel (x 0.0821, y 0.8317 of 1254 px).
+     * The two photographs on the stage — square, on transparent grounds, and
+     * framed so the machine's visible height, ground line and centre of mass
+     * match (scripts/product-images/prepare-angle.py). The scene draws the
+     * page's own <img> elements (components/experience/ProductImageFallback.tsx),
+     * so there is no second download.
+     *
+     * `outlet` is the flexible pipe's nozzle opening, as fractions of the
+     * image box (0,0 top-left): the lowest point of the pipe, measured from
+     * each image's alpha channel.
      */
-    outlet: { u: 0.0821, v: 0.8317 },
-    /** The photographed machine is 34.5 cm tall and fills 84.1% of the box height. */
+    views: {
+      /** public/images/k8-stage-alpha.png (1254 px): the approved front photograph. */
+      front: { outlet: { u: 0.0821, v: 0.8317 } },
+      /** public/images/k8-angle-alpha.png (1314 px): the angled image, from assets/product-images/k8-angle-source.png. */
+      angle: { outlet: { u: 0.1838, v: 0.8813 } },
+    },
+    /** The photographed machine is 34.5 cm tall and fills 84.1% of the box height (in both views). */
     boxMeters: 0.345 / 0.841,
+    /** If the angled photograph arrives after its chapter has begun, it fades in over this long rather than popping in. */
+    lateFadeSeconds: 0.35,
   },
 
   water: {

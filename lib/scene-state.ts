@@ -10,13 +10,15 @@ export const sceneState = {
   pose: { ...POSES.intro.wide } as Pose,
   /** 0–1: how much water should be flowing in the current chapter. */
   flow: 1,
+  /** 0 = front photograph, 1 = angled photograph (see viewAt in lib/experience-poses.ts). */
+  view: 0,
   version: 0,
 };
 
 type Listener = () => void;
 const listeners = new Set<Listener>();
 
-export function publishScene(pose: Pose, flow: number): void {
+export function publishScene(pose: Pose, flow: number, view: number): void {
   const p = sceneState.pose;
   p.s = pose.s;
   p.fx = pose.fx;
@@ -25,6 +27,7 @@ export function publishScene(pose: Pose, flow: number): void {
   p.oy = pose.oy;
   p.yaw = pose.yaw;
   sceneState.flow = flow;
+  sceneState.view = view;
   sceneState.version++;
   listeners.forEach((l) => l());
 }

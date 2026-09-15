@@ -8,13 +8,16 @@ import { SceneMount } from "./SceneMount";
  *             WebGL scene measures so it frames the machine identically;
  *   light   — a soft white pool, so the machine never takes on the stage
  *             colour around it;
- *   product — the page image of the machine: shown immediately, and the
- *             fallback whenever the 3D scene isn't running;
- *   canvas  — the WebGL scene (machine + water). Once it has drawn, the
- *             page image is hidden, so only one machine is ever visible.
+ *   product — the page images of the machine: the front photograph and,
+ *             stacked exactly on it, the angled one. Shown immediately, and
+ *             the fallback whenever the WebGL scene isn't running;
+ *   canvas  — the WebGL scene (the same photographs + water). Once it has
+ *             drawn, the page images are hidden, so only one machine is
+ *             ever visible.
  *
- * The scroll controller gives the light and the page image the same
- * transform, and publishes the same pose to the scene.
+ * The scroll controller gives the light and the page images the same
+ * transform, crossfades the two views, and publishes the same pose and view
+ * to the scene.
  */
 export function PersistentProductStage() {
   return (

@@ -24,7 +24,11 @@ export interface ProductSubject {
   readonly viewDirection: THREE.Vector3;
   /** Photo/ortho renders untonemapped so the photograph matches the page image exactly. */
   readonly toneMapped: boolean;
+  /** Changes whenever the outlet jumps somewhere else (the photograph's view switched). */
+  readonly outletEpoch: number;
   resize(width: number, height: number, frame: FrameRect): void;
   applyPose(pose: Pose): void;
+  /** 0 = front photograph … 1 = angled. A 3D model ignores it: it turns by the pose's yaw instead. */
+  setView(view: number): void;
   dispose(): void;
 }

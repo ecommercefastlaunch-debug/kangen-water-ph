@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { beatsFor, chapters } from "@/lib/experience-chapters";
-import { layout, lerp, poseTransform, sceneAt, textState, track } from "@/lib/experience-poses";
+import { layout, lerp, poseTransform, sceneAt, textState, track, viewAt, viewLayers } from "@/lib/experience-poses";
 import { publishScene } from "@/lib/scene-state";
 
 const WIDE = "(min-width: 1024px)";
@@ -17,10 +17,10 @@ type Range = readonly [number, number];
  *
  * It reads the document's own scroll position — no scroll hijacking, no
  * snapping — converts it to a timeline position in viewport heights, and
- * writes the product transform, the stage colour, the chapter copy and the
- * pH band straight to the DOM. It also publishes the pose and the water
- * flow to the WebGL scene (lib/scene-state.ts), which reads them in its own
- * frame loop. React renders the story once; nothing re-renders while
+ * writes the product transform, the crossfade between the front and angled
+ * photographs, the stage colour, the chapter copy and the pH band straight
+ * to the DOM. It also publishes the pose, the view and the water flow to the
+ * WebGL scene (lib/scene-state.ts), which reads them in its own frame loop. React renders the story once; nothing re-renders while
  * scrolling. Every frame is computed from the absolute scroll position, so
  * reversing, fast scrolling, anchor jumps and reloading mid-page all land on
  * the right state.
@@ -39,11 +39,17 @@ export function StoryController() {
     const copy = Array.from(pin.querySelectorAll<HTMLElement>("[data-chapter]"));
     const phLayer = pin.querySelector<HTMLElement>("[data-ph-scale]");
     const phBand = pin.querySelector<HTMLElement>("[data-ph-band]");
+    const frontImg = product.querySelector<HTMLElement>('[data-view="front"]');
+    const angleImg = product.querySelector<HTMLImageElement>('img[data-view="angle"]');
 
     const reduce = window.matchMedia(REDUCE);
     const wide = window.matchMedia(WIDE);
 
+    // The angled photograph joins the crossfade only once it has loaded; until then (or if it fails) the front one stays.
+    let angleReady = false;
+
     const flows = chapters.map((c) => c.flow);
+    const views = chapters.map((c) => c.view);
     const modes = [false, true].map((isWide) => {
       const beats = beatsFor(isWide);
       const units = beats.map((b) => b.units);
@@ -79,9 +85,12 @@ export function StoryController() {
         el.style.removeProperty("opacity");
         el.style.removeProperty("pointer-events");
       }
+      frontImg?.style.removeProperty("opacity");
+      angleImg?.style.removeProperty("opacity");
       pin.style.removeProperty("--scene-bg");
       phLayer?.style.removeProperty("opacity");
       delete story.dataset.scene;
+      delete pin.dataset.view;
     };
 
     const render = () => {
@@ -95,7 +104,13 @@ export function StoryController() {
       write(product, "transform", transform);
       write(light, "transform", transform);
       write(pin, "--scene-bg", `rgb(${Math.round(bg[0])} ${Math.round(bg[1])} ${Math.round(bg[2])})`);
-      publishScene(pose, track(T, units, starts, flows, lerp));
+
+      const view = viewAt(T, units, starts, views);
+      const layers = viewLayers(angleReady ? view : 0);
+      if (frontImg) write(frontImg, "opacity", layers.front.toFixed(3));
+      if (angleImg) write(angleImg, "opacity", layers.angle.toFixed(3));
+      pin.dataset.view = view <= 0.001 ? "front" : view >= 0.999 ? "angle" : "mix";
+      publishScene(pose, track(T, units, starts, flows, lerp), view);
 
       let phOpacity = 0;
       copy.forEach((el, i) => {
@@ -129,6 +144,23 @@ export function StoryController() {
       if (reduce.matches) clear();
       remeasure();
     };
+    const onAngleLoad = () => {
+      angleReady = true;
+      pin.dataset.angle = "ready";
+      schedule();
+    };
+    const onAngleError = () => {
+      pin.dataset.angle = "failed";
+    };
+
+    // An image already in the cache is complete before this runs, so check before listening.
+    if (angleImg?.complete) {
+      if (angleImg.naturalWidth > 0) onAngleLoad();
+      else onAngleError();
+    } else {
+      angleImg?.addEventListener("load", onAngleLoad, { once: true });
+      angleImg?.addEventListener("error", onAngleError, { once: true });
+    }
 
     measure();
     render();
@@ -142,6 +174,8 @@ export function StoryController() {
     ro.observe(document.body);
 
     return () => {
+      angleImg?.removeEventListener("load", onAngleLoad);
+      angleImg?.removeEventListener("error", onAngleError);
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", remeasure);
       wide.removeEventListener("change", remeasure);

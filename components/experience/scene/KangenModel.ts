@@ -70,6 +70,8 @@ export class ModelSubject implements ProductSubject {
   readonly outletDirection = new THREE.Vector3(...M.outletDirection).normalize();
   readonly viewDirection = new THREE.Vector3(0, 0, 1);
   readonly toneMapped = true;
+  /** The outlet is part of the model, so it never jumps. */
+  readonly outletEpoch = 0;
   worldPerMeter = 1;
   floorY = -1;
 
@@ -136,6 +138,9 @@ export class ModelSubject implements ProductSubject {
     this.floorY = -(this.height / 2) / pxPerMeter - 0.2;
     this.worldPerMeter = 1;
   }
+
+  /** A model turns with the pose's yaw; the photographs' front/angled views don't apply to it. */
+  setView(): void {}
 
   dispose(): void {
     this.object.traverse((o) => {

@@ -28,6 +28,13 @@ export type Chapter = {
    * different pipe — and for the cell and display close-ups.
    */
   flow: number;
+  /**
+   * Which photograph of the K8 the stage shows: 0 = front, 1 = angled.
+   * Two changes only — to the angled view for "One machine. Five waters."
+   * and the five waters and the cell, then back to the front so the touch
+   * display reads clearly, and for the close.
+   */
+  view: 0 | 1;
   waterId?: WaterId;
   /** The water's pH setting(s), for the scale beside the product. */
   ph?: readonly [number, number];
@@ -51,8 +58,8 @@ const WATER_BG: Record<WaterId, string> = {
 const FLOWS_FROM_PIPE: WaterId[] = ["kangen", "clean"];
 
 export const chapters: Chapter[] = [
-  { id: "intro", kind: "intro", pose: "intro", units: 1, unitsCompact: 0.9, bg: hex("#faf9f6"), flow: 1 },
-  { id: "statement", kind: "statement", pose: "statement", units: 1, unitsCompact: 0.85, bg: hex("#eef4f7"), flow: 1 },
+  { id: "intro", kind: "intro", pose: "intro", units: 1, unitsCompact: 0.9, bg: hex("#faf9f6"), flow: 1, view: 0 },
+  { id: "statement", kind: "statement", pose: "statement", units: 1, unitsCompact: 0.85, bg: hex("#eef4f7"), flow: 1, view: 1 },
   ...waters.map(
     (w): Chapter => ({
       id: `water-${w.id}`,
@@ -62,14 +69,15 @@ export const chapters: Chapter[] = [
       unitsCompact: 0.75,
       bg: hex(WATER_BG[w.id]),
       flow: FLOWS_FROM_PIPE.includes(w.id) ? 1 : 0,
+      view: 1,
       waterId: w.id,
       ph: [Math.min(...w.phValues), Math.max(...w.phValues)],
     }),
   ),
-  { id: "power", kind: "power", pose: "power", units: 1.1, unitsCompact: 0.95, bg: hex("#e7ebee"), flow: 0 },
-  { id: "control", kind: "control", pose: "control", units: 1.2, unitsCompact: 1, bg: hex("#ecf1f4"), flow: 0 },
-  { id: "ownership", kind: "ownership", pose: "ownership", units: 1.2, unitsCompact: 1, bg: hex("#f3f2ee"), flow: 1 },
-  { id: "final", kind: "final", pose: "final", units: 1, unitsCompact: 0.9, bg: hex("#faf9f6"), flow: 1 },
+  { id: "power", kind: "power", pose: "power", units: 1.1, unitsCompact: 0.95, bg: hex("#e7ebee"), flow: 0, view: 1 },
+  { id: "control", kind: "control", pose: "control", units: 1.2, unitsCompact: 1, bg: hex("#ecf1f4"), flow: 0, view: 0 },
+  { id: "ownership", kind: "ownership", pose: "ownership", units: 1.2, unitsCompact: 1, bg: hex("#f3f2ee"), flow: 1, view: 0 },
+  { id: "final", kind: "final", pose: "final", units: 1, unitsCompact: 0.9, bg: hex("#faf9f6"), flow: 1, view: 0 },
 ];
 
 export function beatsFor(wide: boolean): Beat[] {

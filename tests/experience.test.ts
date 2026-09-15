@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { beatsFor, chapters, totalUnits } from "@/lib/experience-chapters";
-import { HOLD, layout, POSES, poseTransform, sceneAt, textState, track } from "@/lib/experience-poses";
+import { HOLD, layout, POSES, poseTransform, sceneAt, TEXT, textState, track, viewAt, viewLayers } from "@/lib/experience-poses";
 
 const wide = beatsFor(true);
 const units = wide.map((b) => b.units);
@@ -73,6 +73,69 @@ describe("textState", () => {
       const mid = starts[i] + 0.5 * u;
       expect(textState(mid, i, units, starts).opacity).toBe(1);
     });
+  });
+});
+
+describe("product views", () => {
+  const views = chapters.map((c) => c.view);
+
+  it("starts on the front view, turns for the waters and the cell, and comes back for the display", () => {
+    expect(chapters.map((c) => `${c.id}:${c.view}`)).toEqual([
+      "intro:0",
+      "statement:1",
+      "water-kangen:1",
+      "water-clean:1",
+      "water-beauty:1",
+      "water-strong-acidic:1",
+      "water-strong-kangen:1",
+      "power:1",
+      "control:0",
+      "ownership:0",
+      "final:0",
+    ]);
+  });
+
+  for (const isWide of [true, false]) {
+    const u = beatsFor(isWide).map((b) => b.units);
+    const s = layout(u).starts;
+    const end = s[s.length - 1] + u[u.length - 1];
+
+    it(`holds each chapter's view while its copy is readable (${isWide ? "wide" : "compact"})`, () => {
+      u.forEach((units, i) => {
+        for (let l = TEXT.inEnd; l <= TEXT.outStart; l += 0.01) {
+          expect(viewAt(s[i] + l * units, u, s, views)).toBe(views[i]);
+        }
+      });
+    });
+
+    it(`changes view twice, each over a short stretch of scroll (${isWide ? "wide" : "compact"})`, () => {
+      const step = 0.001;
+      const stretches: number[] = [];
+      let run = 0;
+      for (let T = 0; T <= end; T += step) {
+        const v = viewAt(T, u, s, views);
+        if (v > 0 && v < 1) run += step;
+        else if (run > 0) {
+          stretches.push(run);
+          run = 0;
+        }
+      }
+      expect(stretches).toHaveLength(2);
+      for (const length of stretches) {
+        expect(length).toBeGreaterThan(0.12);
+        expect(length).toBeLessThan(0.3);
+      }
+    });
+  }
+
+  it("crossfades without the machine turning see-through", () => {
+    expect(viewLayers(0)).toEqual({ front: 1, angle: 0 });
+    expect(viewLayers(1)).toEqual({ front: 0, angle: 1 });
+    for (let m = 0; m <= 1; m += 0.01) {
+      const { front, angle } = viewLayers(m);
+      // The angled layer is drawn on top of the front one.
+      expect(angle + front * (1 - angle)).toBeGreaterThan(0.97);
+    }
   });
 });
 

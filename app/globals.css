@@ -310,6 +310,24 @@ body {
   opacity: 0;
 }
 
+/*
+ * The product box holds two photographs of the same K8, stacked exactly:
+ * the front view and the angled view. The scroll controller crossfades
+ * them; until the angled one has loaded, or if it fails, only the front
+ * one shows.
+ */
+.scene-view {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.scene-view[data-view="angle"] {
+  opacity: 0;
+}
+
 /* Accessibility control for the automatic water motion — not a promotion. */
 .scene-pause {
   display: none;

@@ -84,14 +84,23 @@ production domain.
 
 The story's machine and the water leaving its flexible pipe are drawn in
 one WebGL canvas (Three.js, loaded on demand: `components/experience/scene/`).
-Until an approved K8 model is supplied it draws the approved photograph;
-drop the model at `public/models/kangen-k8.glb` with a `WaterOutlet` node
-and set `modelUrl` in `lib/scene-config.ts`. Details, calibration and the
-outlet-node convention: `docs/3d-model-upgrade.md`.
+Until an approved K8 model is supplied it draws two still images of the
+machine in the same box — the front view, and an angled view it crossfades
+to for the waters and the cell. Drop a model at `public/models/kangen-k8.glb`
+with a `WaterOutlet` node and set `modelUrl` in `lib/scene-config.ts`.
+Details, calibration, the outlet-node convention and how view images are
+prepared (`scripts/product-images/`): `docs/3d-model-upgrade.md`.
 
 ## Assets to replace
 
-`public/images/k8-front.png` was supplied by the owner. Its on-screen tiles
-don't match the K8's documented home screen (see the imagery note in
-`docs/content-sources.md`). Replace it with an official Enagic product
-photograph when available — same file name, any size ≥ 1200 px.
+Both product images were supplied by the owner and differ from the real K8
+in places (see the imagery notes in `docs/content-sources.md` and
+`docs/3d-model-upgrade.md`):
+
+- `public/images/k8-angle-alpha.png` — **AI-generated**; its display, a
+  certification label and a second hose don't match the K8. Replace first,
+  with an authentic angled photograph, using `scripts/product-images/`.
+- `public/images/k8-stage-alpha.png` — the front photograph; one display
+  tile reads pH 6.5 instead of 8.5. Replace with an official Enagic product
+  photograph (square, transparent ground, ≥ 1200 px; the nozzle position in
+  `lib/scene-config.ts` must be re-measured).

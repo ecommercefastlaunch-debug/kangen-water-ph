@@ -64,6 +64,10 @@ export const POSES: Record<PoseKey, { wide: Pose; compact: Pose }> = {
 export const clamp = (v: number, lo = 0, hi = 1) => Math.min(hi, Math.max(lo, v));
 export const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 export const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+export const smoothstep = (a: number, b: number, x: number) => {
+  const t = clamp((x - a) / (b - a));
+  return t * t * (3 - 2 * t);
+};
 
 export function mixPose(a: Pose, b: Pose, t: number): Pose {
   return {
@@ -127,6 +131,7 @@ export function track<V>(
   starts: readonly number[],
   values: readonly V[],
   mix: (a: V, b: V, t: number) => V,
+  ease: (t: number) => number = easeInOut,
 ): V {
   const n = values.length;
   for (let i = 0; i < n; i++) {
@@ -135,10 +140,39 @@ export function track<V>(
     if (T > holdEnd) continue;
     if (T >= holdStart) return values[i];
     const prevEnd = starts[i - 1] + HOLD.end * units[i - 1];
-    const t = easeInOut(clamp((T - prevEnd) / (holdStart - prevEnd)));
+    const t = ease(clamp((T - prevEnd) / (holdStart - prevEnd)));
     return mix(values[i - 1], values[i], t);
   }
   return values[n - 1];
+}
+
+/* ─────────────────────────── Product viewpoints ───────────────────────── */
+
+/**
+ * The stage has two still photographs of the same K8 — front and angled —
+ * layered in the same box. `view` runs from 0 (front) to 1 (angled).
+ *
+ * A change of view happens only in the middle of the move between two
+ * chapters (this fraction of it), where both chapters' copy is faint and
+ * the machine is already moving — never slowly across a whole section.
+ */
+export const VIEW_CROSSFADE = { start: 0.25, end: 0.75 } as const;
+
+export const viewEase = (t: number) => smoothstep(VIEW_CROSSFADE.start, VIEW_CROSSFADE.end, t);
+
+/** The view at timeline position `T`, given each chapter's view (0 or 1). */
+export function viewAt(T: number, units: readonly number[], starts: readonly number[], views: readonly number[]): number {
+  return track(T, units, starts, views, lerp, viewEase);
+}
+
+/**
+ * Opacity of each layer for a view mix. The angled image is drawn on top
+ * and comes in before the front one goes, so where the silhouettes overlap
+ * the machine never turns see-through; the double image is limited to
+ * their differing edges, for a short stretch of scroll.
+ */
+export function viewLayers(view: number): { front: number; angle: number } {
+  return { front: 1 - smoothstep(0.4, 1, view), angle: smoothstep(0, 0.6, view) };
 }
 
 export function sceneAt(T: number, beats: readonly Beat[], starts: readonly number[]): { pose: Pose; bg: Rgb } {

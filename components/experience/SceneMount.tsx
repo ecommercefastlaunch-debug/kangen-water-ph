@@ -40,7 +40,9 @@ export function SceneMount() {
     const canvas = canvasRef.current;
     const stage = canvas?.closest<HTMLElement>("[data-story-pin]");
     const frame = stage?.querySelector<HTMLElement>("[data-scene-frame]");
-    if (!canvas || !stage || !frame) return;
+    const front = stage?.querySelector<HTMLImageElement>('img[data-view="front"]');
+    const angle = stage?.querySelector<HTMLImageElement>('img[data-view="angle"]') ?? null;
+    if (!canvas || !stage || !frame || !front) return;
 
     const reduce = window.matchMedia(REDUCE);
     let cancelled = false;
@@ -62,6 +64,7 @@ export function SceneMount() {
             canvas,
             stage,
             frame,
+            images: { front, angle },
             quality,
             onReady(kind) {
               if (cancelled) return;

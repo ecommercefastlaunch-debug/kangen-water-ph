@@ -12,6 +12,7 @@ export const STORY_STATIC_CSS = `
 .chapters{position:relative;inset:auto;height:auto;pointer-events:auto}
 .chapters-scrim,.ph-layer,.scene-canvas,.scene-pause,.scene-proxy-note{display:none}
 .scene-product{opacity:1}
+.scene-view[data-view="angle"]{display:none}
 .chapter{position:relative;inset:auto;opacity:1;transform:none;padding:3rem 0 3.5rem;justify-content:flex-start}
 .chapter + .chapter{border-top:1px solid rgb(21 24 28 / 0.08)}
 `;
