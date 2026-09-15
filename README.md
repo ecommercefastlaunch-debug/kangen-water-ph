@@ -56,6 +56,10 @@ Variables (see `.env.example`):
 | Email via [Resend](https://resend.com) | `RESEND_API_KEY`, `BOOKING_TO_EMAIL`, `BOOKING_FROM_EMAIL` |
 | HTTPS webhook (Apps Script, Make, Zapier, CRM) | `BOOKING_WEBHOOK_URL`, optional `BOOKING_WEBHOOK_SECRET` (HMAC-SHA256 in `X-Signature-SHA256`) |
 
+A ready-made Google Sheet receiver (one row per request plus an email to the
+owner) is in `docs/google-apps-script/`; setup steps are in
+`docs/booking-webhook.md`.
+
 With neither set, the form is shown but disabled with an explanation, and
 the endpoint returns 503. **The home page is static, so redeploy after
 adding or changing these variables** — the form's availability is fixed at

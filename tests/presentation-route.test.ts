@@ -93,6 +93,26 @@ describe("POST /api/presentation — webhook", () => {
     expect(await res.json()).toEqual({ ok: false, error: "delivery_failed" });
   });
 
+  it("treats a 200 HTML page or {ok:false} as a failed delivery", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => new Response("<html><body>Error</body></html>", { status: 200, headers: { "content-type": "text/html; charset=utf-8" } })),
+    );
+    expect((await POST(request(body()))).status).toBe(502);
+
+    vi.stubGlobal("fetch", vi.fn(async () => Response.json({ ok: false, error: "unauthorized" })));
+    expect((await POST(request(body()))).status).toBe(502);
+  });
+
+  it("accepts JSON {ok:true} and plain-text acknowledgements", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => Response.json({ ok: true })));
+    expect((await POST(request(body()))).status).toBe(200);
+
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("Accepted", { status: 200, headers: { "content-type": "text/plain" } })));
+    expect((await POST(request(body()))).status).toBe(200);
+  });
+
   it("reports failure when the receiver cannot be reached", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => Promise.reject(new TypeError("fetch failed"))));
     const log = vi.spyOn(console, "error").mockImplementation(() => {});

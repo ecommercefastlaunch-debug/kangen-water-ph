@@ -4,6 +4,7 @@ import { validateBooking } from "@/lib/validation";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 30;
 
 const MAX_BODY_BYTES = 8_000;
 /** A person needs a few seconds to fill seven fields; scripts usually don't wait. */

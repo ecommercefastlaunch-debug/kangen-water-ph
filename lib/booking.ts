@@ -76,7 +76,8 @@ export function bookingSummary({ reference, receivedAt, booking }: BookingEnvelo
   ].join("\n");
 }
 
-const TIMEOUT_MS = 10_000;
+/** Generous enough for a cold-starting receiver such as Google Apps Script. */
+const TIMEOUT_MS = 15_000;
 
 async function sendWithResend(envelope: BookingEnvelope, env: NodeJS.ProcessEnv): Promise<void> {
   const to = (env.BOOKING_TO_EMAIL ?? "")
@@ -141,6 +142,17 @@ async function sendToWebhook(envelope: BookingEnvelope, env: NodeJS.ProcessEnv):
   });
 
   if (!response.ok) throw new DeliveryError(`webhook_http_${response.status}`);
+
+  // Some receivers (Google Apps Script among them) answer 200 even when they
+  // fail: with an HTML error page, or with {"ok": false}. Neither is a delivery.
+  const type = response.headers.get("content-type") ?? "";
+  if (type.includes("text/html")) throw new DeliveryError("webhook_html_response");
+  if (type.includes("application/json")) {
+    const reply: unknown = await response.json().catch(() => null);
+    if (reply && typeof reply === "object" && (reply as { ok?: unknown }).ok === false) {
+      throw new DeliveryError("webhook_rejected");
+    }
+  }
 }
 
 /** Resolves only once the receiver has accepted the request. */

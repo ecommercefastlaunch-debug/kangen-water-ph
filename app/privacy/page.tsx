@@ -15,7 +15,7 @@ function deliveryText(): string {
     case "resend":
       return "When you send the form, our server passes your details straight to the site operator's email inbox through Resend, an email-delivery service.";
     case "webhook":
-      return "When you send the form, our server passes your details straight to the site operator's own system over an encrypted (HTTPS) connection.";
+      return "When you send the form, our server passes your details over an encrypted (HTTPS) connection straight to a receiving system the site operator controls, such as a spreadsheet and email inbox in their own account.";
     default:
       return "Online requests are not open at the moment, so the form cannot send or collect any details.";
   }
