@@ -1,0 +1,429 @@
+@import "tailwindcss";
+
+/* ───────────────────────────── Design tokens ──────────────────────────── */
+
+@theme {
+  --font-sans: var(--font-inter-tight), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  /* Palette — warm white, deep graphite, pale ice, quiet silver. */
+  --color-paper: #faf9f6;
+  --color-white: #ffffff;
+  --color-ink: #15181c;
+  --color-ink-soft: #3b424a;
+  --color-mute: #5b636c;
+  --color-line: #e2e3e0;
+  --color-ice: #dcebf2;
+  --color-ice-soft: #eef5f8;
+  --color-glacier: #2b6a88;
+  --color-silver: #c7cdd2;
+  --color-graphite: #101316;
+  --color-on-dark: #eceef0;
+  --color-on-dark-mute: #a4acb4;
+  --color-warn: #8a3b12;
+
+  --radius-sm: 6px;
+  --radius-md: 14px;
+  --radius-lg: 28px;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+:root {
+  --header-h: 4.5rem;
+  --gutter: clamp(1rem, 4vw, 3rem);
+  --section-y: clamp(5.5rem, 11vw, 10.5rem);
+  --container: 80rem;
+}
+
+/* ───────────────────────────── Base ───────────────────────────────────── */
+
+html {
+  scroll-padding-top: calc(var(--header-h) + 1.5rem);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--color-ice);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-glacier);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.on-dark :focus-visible {
+  outline-color: var(--color-ice);
+}
+
+.skip-link {
+  position: fixed;
+  left: 1rem;
+  top: 0.75rem;
+  z-index: 100;
+  transform: translateY(-200%);
+  background: var(--color-ink);
+  color: var(--color-paper);
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+}
+
+.skip-link:focus-visible {
+  transform: none;
+}
+
+/* ───────────────────────────── Layout ─────────────────────────────────── */
+
+@utility container-page {
+  width: 100%;
+  max-width: calc(var(--container) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+@utility section-y {
+  padding-block: var(--section-y);
+}
+
+/* ───────────────────────────── Type ───────────────────────────────────── */
+
+@utility eyebrow {
+  font-size: 0.75rem;
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* Oversized editorial heading: a heavy first line and a light second line. */
+@utility type-display {
+  font-size: clamp(3.1rem, 7vw, 7.25rem);
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+@utility type-display-md {
+  font-size: clamp(2.4rem, 5.6vw, 5.25rem);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+@utility type-light {
+  display: block;
+  font-weight: 250;
+  letter-spacing: -0.035em;
+}
+
+@utility lede {
+  font-size: clamp(1.0625rem, 1.25vw, 1.2rem);
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+/* ───────────────────────────── Header ─────────────────────────────────── */
+
+.site-header {
+  background: rgb(250 249 246 / 0.88);
+  backdrop-filter: saturate(1.4) blur(14px);
+  -webkit-backdrop-filter: saturate(1.4) blur(14px);
+  border-bottom: 1px solid rgb(21 24 28 / 0.08);
+}
+
+/* Where scroll-driven animation exists, the bar starts clear over the hero. */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .site-header {
+      animation: header-settle linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 160px;
+    }
+  }
+}
+
+@keyframes header-settle {
+  from {
+    background: rgb(255 255 255 / 0);
+    border-bottom-color: rgb(21 24 28 / 0);
+    backdrop-filter: none;
+  }
+}
+
+.cta-pill {
+  transition:
+    background-color 300ms var(--ease-out),
+    color 300ms var(--ease-out);
+}
+
+/* ───────────────────────────── Reveal ─────────────────────────────────── */
+
+/* Hidden only once JS has started the observer and motion is allowed. */
+@media (prefers-reduced-motion: no-preference) {
+  html[data-motion="on"] [data-reveal] {
+    opacity: 0;
+    transform: translate3d(0, 28px, 0);
+    transition:
+      opacity 900ms var(--ease-out),
+      transform 1100ms var(--ease-out);
+    transition-delay: calc(var(--reveal-i, 0) * 90ms);
+  }
+
+  html[data-motion="on"] [data-reveal][data-shown] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ───────────────────────────── Hero ───────────────────────────────────── */
+
+.hero-glow {
+  background:
+    radial-gradient(55% 60% at 8% 30%, rgb(220 235 242 / 0.7) 0%, rgb(220 235 242 / 0) 70%),
+    linear-gradient(180deg, #ffffff 0%, #ffffff 80%, var(--color-paper) 100%);
+}
+
+/*
+ * The product photo sits on a white backdrop. Blending it (multiply) lets the
+ * page's light gradient show through the white, and feathering the outer 4%
+ * removes any edge left by image compression. Neither changes the machine,
+ * which sits well inside the feathered margin.
+ */
+.product-feather {
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0, #000 4%, #000 96%, transparent 100%),
+    linear-gradient(to bottom, transparent 0, #000 4%, #000 96%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent 0, #000 4%, #000 96%, transparent 100%),
+    linear-gradient(to bottom, transparent 0, #000 4%, #000 96%, transparent 100%);
+  mask-composite: intersect;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-product {
+    animation: product-in 1400ms var(--ease-out) both;
+  }
+  .hero-copy > * {
+    animation: copy-in 1000ms var(--ease-out) both;
+  }
+  .hero-copy > *:nth-child(2) {
+    animation-delay: 90ms;
+  }
+  .hero-copy > *:nth-child(3) {
+    animation-delay: 180ms;
+  }
+}
+
+@keyframes product-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 36px, 0) scale(0.975);
+  }
+}
+
+@keyframes copy-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+}
+
+/* ───────────────────────────── Statement ──────────────────────────────── */
+
+.statement {
+  background: linear-gradient(180deg, var(--color-paper) 0%, var(--color-ice-soft) 40%, var(--color-ice) 100%);
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .statement-line {
+      animation: statement-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 5% cover 40%;
+    }
+    .statement-line + .statement-line {
+      animation-range: entry 20% cover 48%;
+    }
+  }
+}
+
+@keyframes statement-rise {
+  from {
+    opacity: 0.1;
+    transform: translate3d(0, 0.3em, 0);
+  }
+}
+
+/* ───────────────────────────── Five waters ────────────────────────────── */
+
+.waters {
+  background-color: var(--water-tint, var(--color-ice));
+  transition: background-color 900ms var(--ease-in-out);
+}
+
+.ph-scale {
+  background: linear-gradient(0deg, #c98f56 0%, #d9c2a4 30%, #cfd4d8 50%, #9fb0c9 72%, #5f79a8 100%);
+}
+
+.ph-bar {
+  background: linear-gradient(90deg, #c98f56 0%, #d9c2a4 30%, #cfd4d8 50%, #9fb0c9 72%, #5f79a8 100%);
+}
+
+.ph-marker {
+  transition:
+    bottom 900ms var(--ease-out),
+    opacity 500ms var(--ease-out);
+}
+
+.water-panel {
+  transition: opacity 600ms var(--ease-out);
+}
+
+@media (min-width: 1024px) {
+  .water-panel:not([data-active]) {
+    opacity: 0.3;
+  }
+}
+
+/* ───────────────────────────── Plates ─────────────────────────────────── */
+
+.plate {
+  transform: translate3d(calc(var(--i) * 9px), calc(var(--i) * -4.5px), 0);
+  transition: transform 1400ms var(--ease-out);
+  transition-delay: calc(var(--i) * 60ms);
+}
+
+[data-shown] .plate {
+  transform: translate3d(calc(var(--i) * 40px), calc(var(--i) * -20px), 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .plate {
+    transform: translate3d(calc(var(--i) * 40px), calc(var(--i) * -20px), 0);
+  }
+}
+
+/* ───────────────────────────── Disclosure ─────────────────────────────── */
+
+.disclosure > summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+.disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+
+.disclosure-icon {
+  transition: transform 400ms var(--ease-out);
+}
+
+.disclosure[open] > summary .disclosure-icon {
+  transform: rotate(45deg);
+}
+
+/* ───────────────────────────── Form ───────────────────────────────────── */
+
+.field {
+  width: 100%;
+  min-height: 3.25rem;
+  border: 1px solid #b9bdb9;
+  border-radius: var(--radius-sm);
+  background: var(--color-white);
+  padding: 0.8rem 0.95rem;
+  font-size: 1rem;
+  line-height: 1.4;
+  color: var(--color-ink);
+  transition:
+    border-color 200ms var(--ease-out),
+    box-shadow 200ms var(--ease-out);
+}
+
+.field::placeholder {
+  color: #737a82;
+}
+
+.field:hover {
+  border-color: #8e959b;
+}
+
+.field:focus-visible {
+  outline: none;
+  border-color: var(--color-glacier);
+  box-shadow: 0 0 0 3px rgb(43 106 136 / 0.25);
+}
+
+.field[aria-invalid="true"] {
+  border-color: var(--color-warn);
+}
+
+.field[aria-invalid="true"]:focus-visible {
+  box-shadow: 0 0 0 3px rgb(138 59 18 / 0.22);
+}
+
+.field:disabled {
+  background: #f1f2f0;
+  color: #6b7178;
+  cursor: not-allowed;
+}
+
+select.field {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5l5-5' fill='none' stroke='%2315181c' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+}
+
+textarea.field {
+  min-height: 7.5rem;
+  resize: vertical;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .spinner {
+    animation: spin 900ms linear infinite;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ───────────────────────────── Reduced motion ─────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    transition-delay: 0ms !important;
+  }
+}
