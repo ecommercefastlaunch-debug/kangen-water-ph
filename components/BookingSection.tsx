@@ -9,7 +9,7 @@ export function BookingSection() {
     <section
       id="book"
       aria-labelledby="book-title"
-      className="bg-[linear-gradient(180deg,var(--color-ice-soft)_0%,var(--color-ice)_100%)]"
+      className="bg-[linear-gradient(180deg,var(--color-paper)_0%,var(--color-ice-soft)_28%,var(--color-ice)_100%)]"
     >
       <div className="container-page section-y grid gap-14 lg:grid-cols-12 lg:gap-10">
         <div className="lg:col-span-5">
