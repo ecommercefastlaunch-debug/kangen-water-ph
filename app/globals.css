@@ -427,3 +427,78 @@ textarea.field {
     transition-delay: 0ms !important;
   }
 }
+
+/* ───────────────────────────── Carried-over motion ────────────────────── */
+
+/* Water moving along a hose in the connection diagram. */
+.flow-dash {
+  stroke-dasharray: 6 8;
+  animation: kw-dash 1.1s linear infinite;
+}
+
+@keyframes kw-dash {
+  to {
+    stroke-dashoffset: -28;
+  }
+}
+
+/* The "water running" chevrons on the screen demonstration. */
+@keyframes kw-flow {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Voice-guidance bars. */
+@keyframes kw-wave {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+/* The ring around the selected explorer point. */
+@keyframes kw-pulse {
+  from {
+    transform: scale(0.6);
+    opacity: 0.9;
+  }
+  to {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
+@keyframes kw-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* A short fade for content that swaps in place. */
+.kw-fade-in {
+  animation: kw-fade-in 350ms var(--ease-out) both;
+}
+
+@keyframes kw-fade-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+  }
+}
+
+/* Detail illustrations in the engineering section. */
+.plate-metal {
+  background: linear-gradient(90deg, #8d979f 0%, #eef1f3 45%, #b4bcc2 100%);
+}
+
+.brushed {
+  background: repeating-linear-gradient(90deg, #1b2025 0 2px, #161a1e 2px 4px);
+}

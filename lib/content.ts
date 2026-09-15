@@ -12,6 +12,10 @@
  * is labelled in words wherever it appears. Where official sources disagree
  * (languages, output, filter model), the figure is omitted or the Philippine
  * source is used and the conflict is noted in docs/content-sources.md.
+ *
+ * Several sections (the connection diagram, the screen demonstration, the
+ * feature story, the explorer and the everyday uses) were carried over from
+ * the owner's earlier K8 page and re-checked against these rules.
  */
 
 export const hero = {
@@ -33,8 +37,10 @@ export const statement = {
 
 /* ─────────────────────────────── Five waters ──────────────────────────── */
 
+export type WaterId = "kangen" | "clean" | "beauty" | "strong-acidic" | "strong-kangen";
+
 export type Water = {
-  id: string;
+  id: WaterId;
   name: string;
   ph: string;
   /** Marker position(s) on the pH scale. */
@@ -132,6 +138,7 @@ export const technology = {
     { title: "Adjustable", body: "The current can be fine-tuned in the pH setting menu for your local water." }, // MAN EN22
   ],
   caption: "Conceptual illustration of an eight-plate cell. Not an engineering drawing of the K8's interior.",
+  cellCaption: "Illustration of the principle: filtered water in, two streams out. Not a drawing of the K8's internal parts.",
 } as const;
 
 /* ─────────────────────────────── How it works ─────────────────────────── */
@@ -162,41 +169,196 @@ export const steps = [
 export const stepsNote =
   "Strong Acidic and Strong Kangen Water need the electrolysis enhancer tank fitted, and swap roles: Strong Acidic Water leaves through the secondary pipe while Strong Kangen Water flows from the flexible pipe.";
 
+/** MAN EN10, EN13 — how the unit sits at the sink. */
+export const connectCaption = "Illustration — diverter, supply hose and outlets";
+
 /* ─────────────────────────────── Control ──────────────────────────────── */
 
-/** MAN EN9 — home screen layout, two columns by three rows. */
-export const screenTiles = [
-  { ph: "7.0", label: "Clean" },
-  { ph: "9.5", label: "Kangen" },
-  { ph: "6.0", label: "Beauty" },
-  { ph: "9.0", label: "Kangen" },
-  { ph: "2.5", label: "Strong Acidic" },
-  { ph: "8.5", label: "Kangen" },
-] as const;
+export type ScreenIcon = "bottle" | "glass" | "face" | "pot" | "spray" | "cup";
+
+export type ScreenTile = {
+  id: string;
+  ph: string;
+  water: WaterId;
+  label: string;
+  /** What the K8 says when the button is touched (MAN EN18, EN20). */
+  voice: string;
+  icon: ScreenIcon;
+  color: string;
+};
+
+/**
+ * MAN EN9 — the home screen's six buttons, two columns by three rows. Strong
+ * Kangen Water has no button of its own: it flows from the flexible pipe
+ * while pH 2.5 is selected (EN20). Colours and icons are stylised.
+ */
+export const screenTiles: ScreenTile[] = [
+  { id: "7.0", ph: "pH 7.0", water: "clean", label: "Clean Water", voice: "Clean water", icon: "bottle", color: "#3aa35b" },
+  { id: "9.5", ph: "pH 9.5", water: "kangen", label: "Kangen Water 9.5", voice: "Kangen water 9.5", icon: "glass", color: "#4a55c8" },
+  { id: "6.0", ph: "pH 6.0", water: "beauty", label: "Beauty Water", voice: "Beauty water", icon: "face", color: "#e39a2b" },
+  { id: "9.0", ph: "pH 9.0", water: "kangen", label: "Kangen Water 9.0", voice: "Kangen water 9.0", icon: "pot", color: "#5a4fc0" },
+  { id: "2.5", ph: "pH 2.5", water: "strong-acidic", label: "Strong Acidic Water", voice: "Strong acidic water", icon: "spray", color: "#d9573a" },
+  { id: "8.5", ph: "pH 8.5", water: "kangen", label: "Kangen Water 8.5", voice: "Kangen water 8.5", icon: "cup", color: "#2f8fd0" },
+];
+
+/** MAN EN16 language screen; PH K8 page: "Eight languages display and voice prompt". */
+export const languages: { name: string; native: string; lang: string }[] = [
+  { name: "Japanese", native: "日本語", lang: "ja" },
+  { name: "English", native: "English", lang: "en" },
+  { name: "French", native: "Français", lang: "fr" },
+  { name: "German", native: "Deutsch", lang: "de" },
+  { name: "Chinese", native: "简体中文", lang: "zh" },
+  { name: "Italian", native: "Italiano", lang: "it" },
+  { name: "Spanish", native: "Español", lang: "es" },
+  { name: "Portuguese", native: "Português", lang: "pt" },
+];
 
 export const control = {
   eyebrow: "Touch display",
   headline: ["Control at your", "fingertips."],
-  features: [
-    { title: "One home screen", body: "Six water buttons and a Setting menu, operated by touch." }, // MAN EN9
-    { title: "Voice guidance", body: "Each selection, reminder and cleaning cycle is announced. Volume high, low or off." }, // MAN EN16, EN18, EN23
-    { title: "Eight languages", body: "Display and voice guidance, including English." }, // PH (K8 page), MAN EN16
-    { title: "Automatic cleaning", body: "A short rinse after longer use, and a fuller cycle after Strong Acidic Water or a day unused." }, // MAN EN23
-    { title: "Filter reminders", body: "The K8 counts water and time, and tells you when a new filter is due." }, // MAN EN24
-    { title: "Auto power-off", body: "The screen switches off after one to five minutes idle, and wakes at a touch or when water runs." }, // MAN EN17
+  body: "Advanced inside, simple outside. Every water sits on one home screen — touch one, open the tap.",
+  points: [
+    { title: "Touch display", body: "Six water buttons and a Setting menu on one screen." }, // MAN EN9
+    { title: "One touch", body: "Choose a water, then open the tap." }, // MAN EN18
+    { title: "Voice guidance", body: "Each choice is confirmed aloud. Volume high, low or off." }, // MAN EN16, EN18
+    { title: "Eight languages", body: "On screen and in the voice, including English." }, // PH, MAN EN16
   ],
-  caption: "Illustration of the home-screen layout shown in the operation manual. Not a photograph of the display.",
+  demoLabel:
+    "Interactive website demonstration, modelled on the home screen in the K8 operation manual. It isn't the machine's own software; colours and icons are stylised.",
 } as const;
+
+/* ─────────────────────────────── Feature story ───────────────────────── */
+
+/** Regions of the front-view product image, as percentages of its square box. */
+export type FocusRegion = { x: number; y: number; w: number; h: number };
+
+const focus = {
+  screen: { x: 45.4, y: 17.6, w: 16.6, h: 45 },
+  base: { x: 27, y: 82, w: 54, h: 10 },
+  body: { x: 22.5, y: 13.5, w: 62, h: 71 },
+  filter: { x: 22.5, y: 14, w: 23.5, h: 48 },
+} satisfies Record<string, FocusRegion>;
+
+export type FeatureVisual = "wake" | "plug" | "clean" | "filter" | "voltage" | "lcd" | "voice" | "languages";
+
+export type Feature = {
+  id: string;
+  title: string;
+  statement: string;
+  detail: string;
+  focus: FocusRegion;
+  visual: FeatureVisual;
+};
+
+export const featuresIntro = {
+  eyebrow: "Everyday intelligence",
+  headline: ["Built to think", "for itself."],
+} as const;
+
+export const features: Feature[] = [
+  {
+    id: "auto",
+    title: "Auto on / off",
+    statement: "It wakes when you need it.",
+    detail:
+      "Touch the screen or open the tap and the K8 comes on. Leave it, and the screen and power switch off by themselves — after one minute by default, or up to five.", // MAN EN17
+    focus: focus.screen,
+    visual: "wake",
+  },
+  {
+    id: "plug",
+    title: "Plug & play",
+    statement: "No power switch to remember.",
+    detail: "Plugged in and fed from the faucet diverter, the K8 is ready as soon as water runs through it.", // US, MAN EN17
+    focus: focus.base,
+    visual: "plug",
+  },
+  {
+    id: "cleaning",
+    title: "Automatic cleaning",
+    statement: "It rinses itself after use.",
+    detail:
+      "After more than ten minutes of Kangen or Beauty Water, a short rinse runs when the tap closes; a fuller cycle follows Strong Acidic Water or a day unused. The water it discharges while cleaning is not for use.", // MAN EN23
+    focus: focus.body,
+    visual: "clean",
+  },
+  {
+    id: "filter",
+    title: "Filter reminders",
+    statement: "It knows when the filter is due.",
+    detail:
+      "The K8 counts litres and days, and tells you on screen and aloud when a new filter is needed — as a guide, about 6,000 litres or a year, depending on your water.", // MAN EN16, EN24
+    focus: focus.filter,
+    visual: "filter",
+  },
+  {
+    id: "voltage",
+    title: "Multi-voltage",
+    statement: "100–240 V. 50 or 60 Hz.",
+    detail:
+      "A multi-voltage supply with an interchangeable power cord. Philippine household supply falls within its rating; it needs a properly grounded outlet.", // MAN EN3, EN15
+    focus: focus.base,
+    visual: "voltage",
+  },
+  {
+    id: "lcd",
+    title: "Colour touch display",
+    statement: "Everything on one screen.",
+    detail: "A large colour touch display shows the water you've chosen, and what the machine is doing while water runs.", // MAN EN9, EN18
+    focus: focus.screen,
+    visual: "lcd",
+  },
+  {
+    id: "voice",
+    title: "Voice guidance",
+    statement: "It tells you what it's making.",
+    detail: "Selections are confirmed aloud, and so are reminders such as filter changes and cleaning. Volume high, low or off.", // MAN EN16, EN18, EN24
+    focus: focus.screen,
+    visual: "voice",
+  },
+  {
+    id: "languages",
+    title: "Eight languages",
+    statement: "Eight languages. Display and voice.",
+    detail: "Japanese, English, French, German, Chinese, Italian, Spanish and Portuguese.", // MAN EN16, PH
+    focus: focus.screen,
+    visual: "languages",
+  },
+];
 
 /* ─────────────────────────────── Engineering ──────────────────────────── */
 
 export const engineering = {
-  eyebrow: "The manufacturer",
+  eyebrow: "Japanese engineering",
   headline: ["Engineered", "in Japan."],
+  lead: "Enagic was established in Japan in 1974, and the K8 is made in Japan.", // JP outline, MAN back cover
   paragraphs: [
     "The LeveLuk K8 is made by Enagic Co., Ltd., headquartered in Tokyo. Its factory in Katano City, Osaka, produces parts in-house — from pressed electrode plates and moulded components to filter cartridges.", // JP outline, JP manufacturing, JP spec sheet
-    "Enagic states that its manufacturing sites are certified to ISO 9001:2015 for quality management and ISO 14001:2015 for environmental management. Those are certifications of how the factories are run — not approvals of the product, and not evidence of any health effect.", // JP ISO page
   ],
+  facts: [
+    ["Established", "1974"],
+    ["Made in", "Japan"],
+    ["Plates", "Platinum-plated titanium"],
+    ["Plate size", "135 × 75 mm"],
+  ] as [string, string][],
+  macro: [
+    { id: "plates", title: "Eight plates", caption: "Platinum-plated titanium, each about 135 × 75 mm." },
+    { id: "surface", title: "Water in motion", caption: "Filtered first, then divided into two streams." },
+    { id: "panel", title: "The display", caption: "A colour touch screen set into the front." },
+    { id: "finish", title: "The finish", caption: "A white body, about 28 × 34.5 × 14.7 cm." },
+  ] as { id: "plates" | "surface" | "panel" | "finish"; title: string; caption: string }[],
+  factory: {
+    title: "Made in Japan.",
+    caption: "Enagic's Okinawa factory, Japan — photographed on a factory visit.",
+    alt: "The production floor of an Enagic factory in Japan, under long rows of ceiling lights",
+  },
+  certifications: [
+    { name: "ISO 9001:2015", scope: "Quality management systems." },
+    { name: "ISO 14001:2015", scope: "Environmental management systems." },
+  ],
+  certNote:
+    "Enagic Japan lists its manufacturing sites as certified to these standards. They certify how the factories are run — they are not approvals of the product, and not evidence of any health effect.", // JP ISO page
+  certSource: { label: "Enagic Japan — certifications (in Japanese)", href: "https://www.enagic.co.jp/equipment/iso/" },
   independence:
     "Kangen Water PH is an independent website. It is not Enagic's official site and is not operated by Enagic Philippines, Inc.",
   officialSite: { label: "Enagic Philippines — enagicph.com", href: "https://www.enagicph.com/" },
@@ -256,7 +418,163 @@ export const specGroups: { title: string; rows: [string, string][] }[] = [
 export const specNote =
   "Specifications from the LeveLuk K8 operation manual (EN35) and Enagic's published K8 information; plate size from Enagic's K8 web page; language count and warranty from Enagic Philippines. Specifications may change without notice. Output rates are omitted because Enagic sources publish different figures. *Warranty as listed on Enagic Philippines' product price list (August 2026); coverage is limited to the original purchaser and set by Enagic's Consumer Limited Warranty terms.";
 
-/* ─────────────────────────────── Everyday ─────────────────────────────── */
+/* ─────────────────────────────── Explorer ─────────────────────────────── */
+
+export type Hotspot = {
+  id: string;
+  label: string;
+  /** Position on the front-view product image, percent of its box. */
+  x: number;
+  y: number;
+  body: string;
+  /** Internal parts are marked, not shown. */
+  illustrative?: boolean;
+};
+
+export const explorerIntro = {
+  eyebrow: "Explore",
+  headline: ["Take a", "closer look."],
+  caption: "Positions are indicative. Internal parts are marked for orientation, not shown.",
+} as const;
+
+/** MAN EN8 (names of parts), EN9, EN13, EN24. */
+export const hotspots: Hotspot[] = [
+  {
+    id: "lcd",
+    label: "Touch display",
+    x: 53.8,
+    y: 29,
+    body: "A colour touch screen: five waters across seven pH settings, each one touch away and confirmed on screen and aloud.",
+  },
+  {
+    id: "settings",
+    label: "Setting menu",
+    x: 53.8,
+    y: 47,
+    body: "Language, voice volume, pH strength, E-Cleaning, brightness, sleep timer and filter check — all from the Setting button on the same screen.",
+  },
+  {
+    id: "outlet",
+    label: "Flexible pipe",
+    x: 8.6,
+    y: 79,
+    body: "The outlet for your chosen water. Kangen, Clean and Beauty Water flow from this flexible pipe on top of the machine; it swings over a glass or the sink.",
+  },
+  {
+    id: "filter",
+    label: "Water filter",
+    x: 33.5,
+    y: 38,
+    body: "An activated-charcoal filter sits behind the side cover. The K8 tracks its use and tells you when a new one is due.",
+  },
+  {
+    id: "cell",
+    label: "Electrolysis cell",
+    x: 46,
+    y: 69,
+    body: "Inside: eight platinum-plated titanium plates. Marked here for orientation only — the cell's exact position isn't shown.",
+    illustrative: true,
+  },
+  {
+    id: "tank",
+    label: "Tank compartment",
+    x: 70.6,
+    y: 77,
+    body: "Behind the lower cover: the electrolysis enhancer tank used for Strong Acidic Water, and the place the cleaning tank goes for E-Cleaning.",
+  },
+  {
+    id: "base",
+    label: "Water in, water out",
+    x: 50.2,
+    y: 88.5,
+    body: "Tap water arrives from the faucet diverter through a supply hose underneath. The secondary pipe, also at the base, carries the second stream to the sink.",
+  },
+];
+
+/* ─────────────────────────────── Everyday water ───────────────────────── */
+
+export type EverydayImage =
+  | "glass"
+  | "cooking"
+  | "coffee"
+  | "prep"
+  | "skin"
+  | "kitchen"
+  | "house";
+
+export type EverydayUse = {
+  title: string;
+  line: string;
+  water: string;
+  image: EverydayImage;
+  alt: string;
+};
+
+export const everydayIntro = {
+  eyebrow: "Everyday water",
+  headline: ["More ways", "to use water."],
+  body: "Two waters for drinking. Three for everything else — kept apart here, as they should be at home.",
+  careLabel: "Food preparation, skin care and cleaning",
+  note: "Uses follow the K8 operation manual and are for general product education. The photographs are illustrative scenes, not the K8 in use.",
+} as const;
+
+/** MAN EN6 water table. */
+export const everydayDrinking: EverydayUse[] = [
+  {
+    title: "Drinking",
+    line: "Your daily glass. The manual suggests starting at pH 8.5.",
+    water: "Kangen Water · Clean Water",
+    image: "glass",
+    alt: "Water being poured into a clear glass",
+  },
+  {
+    title: "Cooking",
+    line: "Rice, soups and broths.",
+    water: "Kangen Water · pH 9.0",
+    image: "cooking",
+    alt: "Rice being rinsed in a steel bowl beside a simmering pot",
+  },
+  {
+    title: "Coffee & tea",
+    line: "The water behind the morning cup.",
+    water: "Kangen Water · pH 9.5",
+    image: "coffee",
+    alt: "A pour-over coffee set, teapot and kettle on a kitchen counter",
+  },
+];
+
+export const everydayCare: EverydayUse[] = [
+  {
+    title: "Food preparation",
+    line: "Washing fish, meat and vegetables.",
+    water: "Strong Kangen Water",
+    image: "prep",
+    alt: "Leafy greens being washed in a bowl in the kitchen sink",
+  },
+  {
+    title: "Skin care",
+    line: "As an astringent, or added to bath water.",
+    water: "Beauty Water",
+    image: "skin",
+    alt: "A glass of water and a folded towel on a bathroom counter",
+  },
+  {
+    title: "Kitchen cleaning",
+    line: "Knives, cutting boards and utensils.",
+    water: "Strong Acidic Water",
+    image: "kitchen",
+    alt: "A clean kitchen sink with a bowl of water, a cloth and a brush",
+  },
+  {
+    title: "Household cleaning",
+    line: "Kitchen grease and floors.",
+    water: "Strong Kangen Water",
+    image: "house",
+    alt: "Spray bottles and folded cloths on a bright windowsill",
+  },
+];
+
+/* ─────────────────────────────── At home ──────────────────────────────── */
 
 export const lifestyle = {
   eyebrow: "At home",

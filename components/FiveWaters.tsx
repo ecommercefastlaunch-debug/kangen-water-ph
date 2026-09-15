@@ -4,30 +4,12 @@ import Image from "next/image";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { waters, watersIntro, type Water } from "@/lib/content";
 import k8Front from "@/public/images/k8-front.png";
+import { DrinkLabel } from "./DrinkLabel";
 
 const PH_MIN = 2;
 const PH_MAX = 12;
 const toPercent = (ph: number) => ((ph - PH_MIN) / (PH_MAX - PH_MIN)) * 100;
 const SCALE_LABELS = [2, 4, 7, 10, 12];
-
-function DrinkLabel({ drinkable }: { drinkable: boolean }) {
-  return drinkable ? (
-    <span className="inline-flex items-center gap-2 rounded-full border border-glacier/35 bg-white px-3 py-1.5 text-[0.8125rem] font-semibold text-glacier">
-      <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
-        <circle cx="6" cy="6" r="5" fill="currentColor" />
-      </svg>
-      For drinking
-    </span>
-  ) : (
-    <span className="inline-flex items-center gap-2 rounded-full border border-warn/35 bg-white px-3 py-1.5 text-[0.8125rem] font-semibold text-warn">
-      <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
-        <circle cx="6" cy="6" r="5" fill="none" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M2.6 9.4 9.4 2.6" stroke="currentColor" strokeWidth="1.5" />
-      </svg>
-      Not for drinking
-    </span>
-  );
-}
 
 /** Horizontal scale for small screens, one per water. */
 function PhBar({ water }: { water: Water }) {

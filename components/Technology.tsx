@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import { technology } from "@/lib/content";
+import { CellSchematic } from "./CellSchematic";
 
 const PLATES = Array.from({ length: 8 }, (_, i) => i);
 
@@ -62,12 +63,16 @@ export function Technology() {
             ))}
           </dl>
         </div>
-        <figure data-reveal className="lg:col-span-7">
-          <PlateStack />
-          <figcaption className="mt-4 text-center text-xs leading-relaxed text-on-dark-mute">
-            {technology.caption}
-          </figcaption>
-        </figure>
+        <div className="relative lg:col-span-7">
+          <figure data-reveal>
+            <PlateStack />
+            <figcaption className="mt-4 text-center text-xs leading-relaxed text-on-dark-mute">{technology.caption}</figcaption>
+          </figure>
+          <figure className="relative mx-auto mt-10 w-[86%] max-w-[340px] rounded-[var(--radius-md)] bg-white p-5 text-ink shadow-[0_30px_60px_-30px_rgb(0_0_0/0.6)] lg:absolute lg:bottom-[14%] lg:left-[-2%] lg:mt-0 lg:w-[40%]">
+            <CellSchematic className="h-auto w-full" />
+            <figcaption className="mt-3 border-t border-line pt-3 text-xs leading-relaxed text-mute">{technology.cellCaption}</figcaption>
+          </figure>
+        </div>
       </div>
     </section>
   );

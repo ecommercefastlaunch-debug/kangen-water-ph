@@ -92,6 +92,35 @@ The manual's water table also describes Strong Acidic Water as a
 | Manufacturing sites certified to ISO 9001:2015 and ISO 14001:2015 — management-system certifications, not product approvals | JP-ISO |
 | Enagic Philippines, Inc. is the official PH entity; official site enagicph.com | PH-K8 footer |
 
+### Sections carried over from the owner's earlier K8 page
+
+The connection diagram, cell drawing, screen demonstration, feature story,
+explorer, everyday uses and engineering details came from the owner's own
+earlier page (kangen.ph/Leveluk-K8-details). Each claim was re-checked;
+where that page differed from the sources above, this site follows the
+sources.
+
+| Claim on site | Source | Change from the earlier page |
+| --- | --- | --- |
+| Diverter on the spout → supply hose → K8; flexible pipe over the sink; secondary pipe to the sink | MAN EN10, EN13 | — |
+| Home screen: 7.0 Clean, 9.5 / 9.0 / 8.5 Kangen, 6.0 Beauty, 2.5 Strong Acidic, Setting; voice lines | MAN EN9, EN18, EN20 | Demo colours and icons labelled as stylised |
+| 8 display and voice languages (Japanese, English, French, German, Chinese, Italian, Spanish, Portuguese) | PH-K8, MAN EN16 | Was 10 (US web) |
+| Auto on/off after 1–5 min idle; wakes on touch or water flow | MAN EN17 | — |
+| Plug & play (no power switch) | US-K8, MAN EN17 | — |
+| Automatic rinse after >10 min of Kangen/Beauty; fuller cycle after Strong Acidic or 24 h idle | MAN EN23 | — |
+| Filter check: about 6,000 L or 1 year, notified on screen and aloud | MAN EN16, EN24 | Dropped the filter model name (F8 vs FC1 conflict) |
+| 100–240 V, 50/60 Hz, interchangeable cord, grounded outlet | MAN EN3, EN15 | "Worldwide" dropped |
+| Parts: flexible pipe, touch display, water filter behind side cover, tank compartment (enhancer tank, cleaning tank), supply hose and secondary pipe at the base | MAN EN8, EN13, EN25 | "F8" dropped |
+| Plates platinum-plated titanium | MAN EN35 | Was "platinum-coated" |
+| Enagic established 1974 | JP-OUTLINE (株式会社エナジック, est. 21 June 1974) | — |
+| ISO 9001:2015 and ISO 14001:2015 for the manufacturing sites | JP-ISO | ISO 13485 removed (not on Enagic Japan's page); dead certificate PDF links replaced by Enagic Japan's certification page |
+| Everyday uses: drinking from pH 8.5, cooking at 9.0, coffee and tea at 9.5; Strong Kangen for washing food, grease and floors; Beauty as an astringent and in bath water; Strong Acidic for knives, boards and utensils | MAN EN6 | Beauty "toner" reworded to the manual's "astringent" |
+
+Not carried over: the earlier page's second call-to-action section
+("Experience the K8") and its navigation menu (this site has one CTA, in the
+header), and the `k8-counter.jpg` / `k8-cutout.png` product images (their
+screens show a "pH6.5" tile the real K8 does not have).
+
 ## Conflicts — flagged, not resolved arbitrarily
 
 | Topic | Disagreement | What the site does |
@@ -106,7 +135,7 @@ The manual's water table also describes Strong Acidic Water as a
 | Water name | "Neutral Water" (US web) vs "Clean Water" (manual, PH) | Uses **Clean Water**. |
 | Voltage wording | 100–240 V (manual) vs "110V–240V" (PH page) | Uses the manual's rated **100–240 V**. No PH-specific 220 V/60 Hz spec is published; the FAQ says so. |
 | Width | 279 mm (web) vs 28.0 cm (manual) | Uses the manual. |
-| Founding year | Two Enagic entities listed (1974 and 1975) | **Omitted**. |
+| Founding year | Two Enagic entities listed (株式会社エナジック 1974, the manufacturer; エナジック株式会社 1975) | Uses **1974**, the manufacturing company's date. |
 | New-filter flush | 15 min (EN5) vs 3 min (EN26) in the same manual | **Omitted**. |
 
 ## Deliberately not used

@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
-import { steps, stepsNote } from "@/lib/content";
+import { connectCaption, steps, stepsNote } from "@/lib/content";
+import { ConnectDiagram } from "./ConnectDiagram";
 
 const stroke = { fill: "none", stroke: "currentColor", strokeWidth: 1.4, strokeLinecap: "round", strokeLinejoin: "round" } as const;
 
@@ -51,7 +52,14 @@ export function HowItWorks() {
           </p>
         </div>
 
-        <ol className="mt-14 grid gap-px overflow-hidden border border-line bg-line sm:grid-cols-2 lg:mt-20 lg:grid-cols-4">
+        <figure data-reveal className="mt-14 rounded-[var(--radius-lg)] bg-ice-soft px-3 pb-6 pt-8 sm:px-10 sm:pb-8 sm:pt-12 lg:mt-20">
+          <ConnectDiagram className="mx-auto h-auto w-full max-w-[860px]" />
+          <figcaption className="mt-4 inline-flex rounded-full bg-white px-3 py-1.5 text-xs font-medium text-ink-soft">
+            {connectCaption}
+          </figcaption>
+        </figure>
+
+        <ol className="mt-6 grid gap-px overflow-hidden border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
           {steps.map((step, i) => (
             <li
               key={step.n}
