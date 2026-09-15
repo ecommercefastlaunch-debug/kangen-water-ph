@@ -34,7 +34,8 @@ export const POSES: Record<PoseKey, { wide: Pose; compact: Pose }> = {
   statement: { wide: { s: 0.9, ...centre, ox: 0.03, oy: 0.03 }, compact: { s: 0.9, ...centre, ox: 0, oy: 0.03 } },
   waters: { wide: { s: 0.94, ...centre, ox: 0, oy: 0.02 }, compact: { s: 0.92, ...centre, ox: 0, oy: 0.02 } },
   power: { wide: { s: 1.16, fx: 0.5, fy: 0.56, ox: 0, oy: 0.02 }, compact: { s: 1.12, fx: 0.5, fy: 0.56, ox: 0, oy: 0.02 } },
-  control: { wide: { s: 1.5, ...DISPLAY_FOCUS, ox: 0.08, oy: -0.02 }, compact: { s: 1.5, ...DISPLAY_FOCUS, ox: 0, oy: -0.03 } },
+  // Wide: 1.38× keeps the flexible pipe clear of the left column and the Enagic mark clear of the right one.
+  control: { wide: { s: 1.38, ...DISPLAY_FOCUS, ox: 0.12, oy: -0.02 }, compact: { s: 1.5, ...DISPLAY_FOCUS, ox: 0, oy: -0.03 } },
   ownership: { wide: { s: 0.96, ...centre, ox: 0, oy: 0.02 }, compact: { s: 0.94, ...centre, ox: 0, oy: 0.02 } },
   final: { wide: { s: 1.04, ...centre, ox: 0, oy: 0.01 }, compact: { s: 1, ...centre, ox: 0, oy: 0 } },
 };

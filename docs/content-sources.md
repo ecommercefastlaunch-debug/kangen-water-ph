@@ -148,17 +148,22 @@ certification does not apply in the Philippines.
 
 ## Imagery
 
+The page shows the product once, in the persistent story stage.
+
 | File | Origin | Notes |
 | --- | --- | --- |
-| `public/images/k8-front.png` | Supplied by the site owner (`~/Downloads/k8-front.avif`; the lossless PNG of the same image, verified pixel-identical within compression noise) | Used as the hero and five-waters visual at the owner's instruction. **See caveat below.** |
-| `public/images/home-marble-wide.jpg`, `home-condo-portrait.jpg`, `home-wall-portrait.jpg` | Owner's photo library of installed K8 units (`kangen-photos/2-installed-machine`) | Genuine photographs; no faces. |
-| `app/opengraph-image.jpg` | Generated from `k8-front.png` + live text | |
+| `public/images/k8-stage.png` | The owner-supplied K8 front view (`~/Downloads/k8-front.avif`, lossless copy `enagic-showroom/public/products/leveluk-k8/main.png`), with the display panel from the owner's own cut-out (`enagic-showroom/docs/video-production/leveluk-k8/frames/k8-machine-cutout.png`, built by `tools/build_machine_cutout.py` from the client-supplied `k8-machine-reference.png`). Composited at the exact pixel offset (81, 93); outside the panel the two images are identical. | The only product image. Moved and scaled by the story, never rotated or redrawn. **See caveat below.** |
+| `app/opengraph-image.jpg` | Generated from `k8-stage.png` + live text | |
 
-**Caveat on `k8-front.png`:** the tiles on the machine's screen in this image
-do not match the K8's real home screen as documented in MAN EN9 (for example
-it shows a "pH 11.5" tile and labels pH 8.5 "Clean Water"), and the on-screen
-wordmark is slightly malformed. That suggests a retouched or rendered image
-rather than an unedited photograph. It is never cropped to the display, the
-site's text never relies on it, and the display section uses a labelled
-illustration built from the manual. **Replace it with an official Enagic
-product photograph when one is available.**
+**Caveat on the product image.** It is a studio image, not a 3D model. Its
+display panel matches the manual's home screen (EN9) — pH 7.0 / 9.5, 6.0 / 9.0,
+2.5 and Setting — except the last tile, which reads "pH6.5" where the real
+K8 shows pH 8.5; that error is in the client's reference photograph itself.
+The close-up chapter is limited to 1.38× (wide) / 1.5× (compact) and carries
+a caption that on-screen details may differ. **Replace it with an official
+Enagic photograph — or an accurate 3D model (docs/3d-model-upgrade.md) —
+when one is available.**
+
+Removed in the persistent-product redesign (still in git history): the
+installation photographs, the everyday-use scenes and the factory
+photograph, because the brief shows the machine once, in one stage.

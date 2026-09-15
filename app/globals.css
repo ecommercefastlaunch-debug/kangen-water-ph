@@ -270,6 +270,14 @@ body {
   will-change: transform;
 }
 
+/* Taller phones have room for a larger machine, closer to the copy. */
+@media (max-width: 1023px) and (min-height: 720px) {
+  .scene-anchor {
+    top: 37svh;
+    height: min(42svh, 86vw);
+  }
+}
+
 /* White light behind the machine, larger than the photograph's ground. */
 .scene-light {
   position: absolute;

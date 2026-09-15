@@ -85,7 +85,7 @@ export function StoryContent() {
                   </div>
                   <p className="story-body mt-5">{c.intro.body}</p>
                 </div>
-                <dl className={`${SIDE} grid grid-cols-2 gap-x-6 gap-y-7 border-t border-ink/15 pt-6`}>
+                <dl className="hidden gap-x-6 gap-y-7 border-t border-ink/15 pt-6 lg:col-span-3 lg:col-start-10 lg:grid lg:grid-cols-2">
                   {c.intro.facts.map(([value, label]) => (
                     <div key={label} className="flex flex-col-reverse gap-1.5">
                       <dt className="eyebrow text-mute">{label}</dt>
