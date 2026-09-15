@@ -80,6 +80,15 @@ production domain.
 - Non-drinking waters are labelled in words wherever they appear.
 - The site is independent and says so; it is not Enagic's official site.
 
+## 3D product stage
+
+The story's machine and the water leaving its flexible pipe are drawn in
+one WebGL canvas (Three.js, loaded on demand: `components/experience/scene/`).
+Until an approved K8 model is supplied it draws the approved photograph;
+drop the model at `public/models/kangen-k8.glb` with a `WaterOutlet` node
+and set `modelUrl` in `lib/scene-config.ts`. Details, calibration and the
+outlet-node convention: `docs/3d-model-upgrade.md`.
+
 ## Assets to replace
 
 `public/images/k8-front.png` was supplied by the owner. Its on-screen tiles

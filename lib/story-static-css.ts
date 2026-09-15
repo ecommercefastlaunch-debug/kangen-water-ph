@@ -10,7 +10,8 @@ export const STORY_STATIC_CSS = `
 .scene-stage{position:relative;inset:auto;height:min(72svh,640px)}
 .scene-anchor{left:50%;top:52%;transform:none}
 .chapters{position:relative;inset:auto;height:auto;pointer-events:auto}
-.chapters-scrim,.ph-layer{display:none}
+.chapters-scrim,.ph-layer,.scene-canvas,.scene-pause,.scene-proxy-note{display:none}
+.scene-product{opacity:1}
 .chapter{position:relative;inset:auto;opacity:1;transform:none;padding:3rem 0 3.5rem;justify-content:flex-start}
 .chapter + .chapter{border-top:1px solid rgb(21 24 28 / 0.08)}
 `;

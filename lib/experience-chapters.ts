@@ -20,6 +20,14 @@ export type Chapter = {
   unitsCompact: number;
   /** Stage colour around the product. The product itself is never tinted. */
   bg: Rgb;
+  /**
+   * 1 = water flows from the flexible pipe in this chapter, 0 = it stops.
+   * The demonstration is Kangen Water, a drinking water that the manual says
+   * flows from the flexible pipe (EN18); Clean Water uses the same outlet.
+   * It stops for the non-drinking waters — Strong Acidic Water comes from a
+   * different pipe — and for the cell and display close-ups.
+   */
+  flow: number;
   waterId?: WaterId;
   /** The water's pH setting(s), for the scale beside the product. */
   ph?: readonly [number, number];
@@ -39,9 +47,12 @@ const WATER_BG: Record<WaterId, string> = {
   "strong-kangen": "#e3e7f1",
 };
 
+/** Drinking waters from the flexible pipe (MAN EN6, EN18). */
+const FLOWS_FROM_PIPE: WaterId[] = ["kangen", "clean"];
+
 export const chapters: Chapter[] = [
-  { id: "intro", kind: "intro", pose: "intro", units: 1, unitsCompact: 0.9, bg: hex("#faf9f6") },
-  { id: "statement", kind: "statement", pose: "statement", units: 1, unitsCompact: 0.85, bg: hex("#eef4f7") },
+  { id: "intro", kind: "intro", pose: "intro", units: 1, unitsCompact: 0.9, bg: hex("#faf9f6"), flow: 1 },
+  { id: "statement", kind: "statement", pose: "statement", units: 1, unitsCompact: 0.85, bg: hex("#eef4f7"), flow: 1 },
   ...waters.map(
     (w): Chapter => ({
       id: `water-${w.id}`,
@@ -50,14 +61,15 @@ export const chapters: Chapter[] = [
       units: 0.8,
       unitsCompact: 0.75,
       bg: hex(WATER_BG[w.id]),
+      flow: FLOWS_FROM_PIPE.includes(w.id) ? 1 : 0,
       waterId: w.id,
       ph: [Math.min(...w.phValues), Math.max(...w.phValues)],
     }),
   ),
-  { id: "power", kind: "power", pose: "power", units: 1.1, unitsCompact: 0.95, bg: hex("#e7ebee") },
-  { id: "control", kind: "control", pose: "control", units: 1.2, unitsCompact: 1, bg: hex("#ecf1f4") },
-  { id: "ownership", kind: "ownership", pose: "ownership", units: 1.2, unitsCompact: 1, bg: hex("#f3f2ee") },
-  { id: "final", kind: "final", pose: "final", units: 1, unitsCompact: 0.9, bg: hex("#faf9f6") },
+  { id: "power", kind: "power", pose: "power", units: 1.1, unitsCompact: 0.95, bg: hex("#e7ebee"), flow: 0 },
+  { id: "control", kind: "control", pose: "control", units: 1.2, unitsCompact: 1, bg: hex("#ecf1f4"), flow: 0 },
+  { id: "ownership", kind: "ownership", pose: "ownership", units: 1.2, unitsCompact: 1, bg: hex("#f3f2ee"), flow: 1 },
+  { id: "final", kind: "final", pose: "final", units: 1, unitsCompact: 0.9, bg: hex("#faf9f6"), flow: 1 },
 ];
 
 export function beatsFor(wide: boolean): Beat[] {

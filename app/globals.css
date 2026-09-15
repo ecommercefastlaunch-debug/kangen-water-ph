@@ -285,8 +285,73 @@ body {
   background: radial-gradient(closest-side, #fff 0%, #fff 76%, rgb(255 255 255 / 0) 100%);
 }
 
-.scene-product {
-  mix-blend-mode: multiply;
+/* An untransformed copy of the product box: the WebGL scene measures it. */
+.scene-frame {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/*
+ * The WebGL canvas (machine + water). It sits above the page image and
+ * below the copy. Once it has drawn its first frame the stage is marked
+ * data-webgl="ready" and the page image is hidden in the same paint, so
+ * only one machine is ever on screen.
+ */
+.scene-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.story-pin[data-webgl="ready"] .scene-product {
+  opacity: 0;
+}
+
+/* Accessibility control for the automatic water motion — not a promotion. */
+.scene-pause {
+  display: none;
+  position: absolute;
+  z-index: 3;
+  top: calc(var(--header-h) + 0.75rem);
+  right: var(--gutter);
+  min-height: 2.25rem;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0 0.85rem;
+  border-radius: 999px;
+  border: 1px solid rgb(21 24 28 / 0.14);
+  background: rgb(255 255 255 / 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--color-ink-soft);
+  font-size: 0.75rem;
+  font-weight: 500;
+  pointer-events: auto;
+}
+
+.scene-pause:hover {
+  color: var(--color-ink);
+  border-color: rgb(21 24 28 / 0.3);
+}
+
+.story-pin[data-webgl="ready"] .scene-pause {
+  display: inline-flex;
+}
+
+.scene-proxy-note {
+  position: absolute;
+  z-index: 3;
+  left: var(--gutter);
+  top: calc(var(--header-h) + 0.75rem);
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  background: #8a3b12;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
 }
 
 .chapters {

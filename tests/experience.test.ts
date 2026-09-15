@@ -22,7 +22,7 @@ describe("poseTransform", () => {
 
   it("places the focus point at the requested offset", () => {
     // Zooming ×2 on the point (0.75, 0.5) with no offset moves the box left by half its width.
-    expect(poseTransform({ s: 2, fx: 0.75, fy: 0.5, ox: 0, oy: 0 })).toBe("translate3d(-50.000%, 0.000%, 0) scale(2.0000)");
+    expect(poseTransform({ s: 2, fx: 0.75, fy: 0.5, ox: 0, oy: 0, yaw: 0 })).toBe("translate3d(-50.000%, 0.000%, 0) scale(2.0000)");
   });
 });
 

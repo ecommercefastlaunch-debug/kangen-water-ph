@@ -2,19 +2,17 @@
  * Poses for the persistent K8, and the pure maths that moves between them.
  *
  * Nothing here touches the DOM: the scroll controller passes in a timeline
- * position and writes the result to the page. That keeps this file
- * unit-tested and renderer-agnostic.
+ * position and writes the result to the page (and to the WebGL scene via
+ * lib/scene-state.ts). That keeps this file unit-tested and renderer-agnostic.
  *
- * A pose frames the product image: a scale `s`, and a focus point (`fx`,
- * `fy`, fractions of the image box) placed at an offset (`ox`, `oy`,
- * fractions of the box) from the stage anchor. The current renderer is a
- * flat product photograph, so poses only move and scale — they never rotate,
- * which would expose sides the photograph does not have. A future 3D
- * renderer can add camera fields here without changing the timeline
- * (docs/3d-model-upgrade.md).
+ * A pose frames the product: a scale `s`, and a focus point (`fx`, `fy`,
+ * fractions of the product box) placed at an offset (`ox`, `oy`, fractions
+ * of the box) from the stage anchor. `yaw` (radians, positive turns the
+ * pipe side towards the viewer) is used only by a real 3D model — the
+ * photograph is flat and never rotates.
  */
 
-export type Pose = { s: number; fx: number; fy: number; ox: number; oy: number };
+export type Pose = { s: number; fx: number; fy: number; ox: number; oy: number; yaw: number };
 export type Rgb = readonly [number, number, number];
 export type PoseKey = "intro" | "statement" | "waters" | "power" | "control" | "ownership" | "final";
 
@@ -26,18 +24,41 @@ export const DISPLAY_FOCUS = { fx: 0.536, fy: 0.4 };
 /**
  * `wide` is ≥1024px (product centred, copy in side columns); `compact` is
  * below that (product in the upper part of the screen, copy beneath).
- * The intro pose is the identity, so the server-rendered first frame and
- * the first animated frame are the same — nothing jumps on load.
+ * The intro framing is the identity, so the server-rendered first frame and
+ * the first animated frame are the same — nothing jumps on load. Yaw stays
+ * between front and a gentle three-quarter view; the display close-up is
+ * nearly frontal.
  */
 export const POSES: Record<PoseKey, { wide: Pose; compact: Pose }> = {
-  intro: { wide: { s: 1, ...centre, ox: 0, oy: 0 }, compact: { s: 1, ...centre, ox: 0, oy: 0 } },
-  statement: { wide: { s: 0.9, ...centre, ox: 0.03, oy: 0.03 }, compact: { s: 0.9, ...centre, ox: 0, oy: 0.03 } },
-  waters: { wide: { s: 0.94, ...centre, ox: 0, oy: 0.02 }, compact: { s: 0.92, ...centre, ox: 0, oy: 0.02 } },
-  power: { wide: { s: 1.16, fx: 0.5, fy: 0.56, ox: 0, oy: 0.02 }, compact: { s: 1.12, fx: 0.5, fy: 0.56, ox: 0, oy: 0.02 } },
+  intro: {
+    wide: { s: 1, ...centre, ox: 0, oy: 0, yaw: 0.22 },
+    compact: { s: 1, ...centre, ox: 0, oy: 0, yaw: 0.22 },
+  },
+  statement: {
+    wide: { s: 0.9, ...centre, ox: 0.03, oy: 0.03, yaw: 0.34 },
+    compact: { s: 0.9, ...centre, ox: 0, oy: 0.03, yaw: 0.3 },
+  },
+  waters: {
+    wide: { s: 0.94, ...centre, ox: 0, oy: 0.02, yaw: 0.26 },
+    compact: { s: 0.92, ...centre, ox: 0, oy: 0.02, yaw: 0.24 },
+  },
+  power: {
+    wide: { s: 1.16, fx: 0.5, fy: 0.56, ox: 0, oy: 0.02, yaw: 0.42 },
+    compact: { s: 1.12, fx: 0.5, fy: 0.56, ox: 0, oy: 0.02, yaw: 0.36 },
+  },
   // Wide: 1.38× keeps the flexible pipe clear of the left column and the Enagic mark clear of the right one.
-  control: { wide: { s: 1.38, ...DISPLAY_FOCUS, ox: 0.12, oy: -0.02 }, compact: { s: 1.5, ...DISPLAY_FOCUS, ox: 0, oy: -0.03 } },
-  ownership: { wide: { s: 0.96, ...centre, ox: 0, oy: 0.02 }, compact: { s: 0.94, ...centre, ox: 0, oy: 0.02 } },
-  final: { wide: { s: 1.04, ...centre, ox: 0, oy: 0.01 }, compact: { s: 1, ...centre, ox: 0, oy: 0 } },
+  control: {
+    wide: { s: 1.38, ...DISPLAY_FOCUS, ox: 0.12, oy: -0.02, yaw: 0.06 },
+    compact: { s: 1.5, ...DISPLAY_FOCUS, ox: 0, oy: -0.03, yaw: 0.04 },
+  },
+  ownership: {
+    wide: { s: 0.96, ...centre, ox: 0, oy: 0.02, yaw: 0.3 },
+    compact: { s: 0.94, ...centre, ox: 0, oy: 0.02, yaw: 0.26 },
+  },
+  final: {
+    wide: { s: 1.04, ...centre, ox: 0, oy: 0.01, yaw: 0.2 },
+    compact: { s: 1, ...centre, ox: 0, oy: 0, yaw: 0.2 },
+  },
 };
 
 export const clamp = (v: number, lo = 0, hi = 1) => Math.min(hi, Math.max(lo, v));
@@ -51,6 +72,7 @@ export function mixPose(a: Pose, b: Pose, t: number): Pose {
     fy: lerp(a.fy, b.fy, t),
     ox: lerp(a.ox, b.ox, t),
     oy: lerp(a.oy, b.oy, t),
+    yaw: lerp(a.yaw, b.yaw, t),
   };
 }
 
@@ -59,15 +81,19 @@ export function mixRgb(a: Rgb, b: Rgb, t: number): Rgb {
 }
 
 /**
- * CSS transform for a pose, applied around the centre of the product box.
- * After `scale(s)` the focus point sits at s·(f − ½); translating by
- * o − s·(f − ½) moves it to the requested offset. Percentages in translate
- * are relative to the box, so this is resolution-independent.
+ * Where the product box's centre moves, in fractions of the box. After
+ * scaling by s around the centre, the focus point sits at s·(f − ½);
+ * offsetting by o − s·(f − ½) moves it to the requested place. The CSS
+ * transform and the WebGL scene both use this, so they always agree.
  */
+export function poseOffset(p: Pose): { tx: number; ty: number } {
+  return { tx: p.ox - p.s * (p.fx - 0.5), ty: p.oy - p.s * (p.fy - 0.5) };
+}
+
+/** CSS transform for a pose, applied around the centre of the product box. */
 export function poseTransform(p: Pose): string {
-  const tx = (p.ox - p.s * (p.fx - 0.5)) * 100;
-  const ty = (p.oy - p.s * (p.fy - 0.5)) * 100;
-  return `translate3d(${tx.toFixed(3)}%, ${ty.toFixed(3)}%, 0) scale(${p.s.toFixed(4)})`;
+  const { tx, ty } = poseOffset(p);
+  return `translate3d(${(tx * 100).toFixed(3)}%, ${(ty * 100).toFixed(3)}%, 0) scale(${p.s.toFixed(4)})`;
 }
 
 /* ───────────────────────────── Timeline ───────────────────────────────── */

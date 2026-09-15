@@ -1,11 +1,11 @@
 import Image from "next/image";
-import k8 from "@/public/images/k8-stage.png";
+import k8 from "@/public/images/k8-stage-alpha.png";
 
 /**
- * The current product renderer: one photograph of the K8 on a white ground.
- * It is an image, not a 3D model — the stage only moves and scales it, and
- * never rotates it. Swap in a 3D renderer here when an accurate model exists
- * (docs/3d-model-upgrade.md).
+ * The approved K8 product photograph, on a transparent ground. Shown at
+ * once, and kept as the fallback whenever the WebGL scene isn't running
+ * (reduced motion, no WebGL, loading, or an error). It is a photograph,
+ * not a 3D model: the stage only moves and scales it.
  *
  * Served at up to its full 1254px so the display close-up stays sharp.
  */

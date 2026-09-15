@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { beatsFor, chapters } from "@/lib/experience-chapters";
 import { layout, lerp, poseTransform, sceneAt, textState, track } from "@/lib/experience-poses";
+import { publishScene } from "@/lib/scene-state";
 
 const WIDE = "(min-width: 1024px)";
 const REDUCE = "(prefers-reduced-motion: reduce)";
@@ -17,10 +18,12 @@ type Range = readonly [number, number];
  * It reads the document's own scroll position — no scroll hijacking, no
  * snapping — converts it to a timeline position in viewport heights, and
  * writes the product transform, the stage colour, the chapter copy and the
- * pH band straight to the DOM. React renders the story once; nothing
- * re-renders while scrolling. Every frame is computed from the absolute
- * scroll position, so reversing, fast scrolling, anchor jumps and reloading
- * mid-page all land on the right state.
+ * pH band straight to the DOM. It also publishes the pose and the water
+ * flow to the WebGL scene (lib/scene-state.ts), which reads them in its own
+ * frame loop. React renders the story once; nothing re-renders while
+ * scrolling. Every frame is computed from the absolute scroll position, so
+ * reversing, fast scrolling, anchor jumps and reloading mid-page all land on
+ * the right state.
  *
  * Under reduced motion it does nothing: CSS shows the static story instead.
  */
@@ -40,6 +43,7 @@ export function StoryController() {
     const reduce = window.matchMedia(REDUCE);
     const wide = window.matchMedia(WIDE);
 
+    const flows = chapters.map((c) => c.flow);
     const modes = [false, true].map((isWide) => {
       const beats = beatsFor(isWide);
       const units = beats.map((b) => b.units);
@@ -91,6 +95,7 @@ export function StoryController() {
       write(product, "transform", transform);
       write(light, "transform", transform);
       write(pin, "--scene-bg", `rgb(${Math.round(bg[0])} ${Math.round(bg[1])} ${Math.round(bg[2])})`);
+      publishScene(pose, track(T, units, starts, flows, lerp));
 
       let phOpacity = 0;
       copy.forEach((el, i) => {

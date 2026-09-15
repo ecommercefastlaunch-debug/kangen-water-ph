@@ -1,44 +1,66 @@
-# Upgrading the persistent K8 to real 3D
+# 3D product stage — model and water
 
-The story is built around one persistent product stage. Today that stage
-renders a **photograph** (`components/experience/ProductImageFallback.tsx`,
-`public/images/k8-stage.png`). It is not 3D: the scroll timeline only moves,
-scales and relights it, and never rotates it, because the photograph has no
-sides or back.
+The story's product stage is one WebGL canvas (`components/experience/scene/`)
+that draws the machine and a stream of water leaving the flexible pipe.
 
-No accurate K8 model was available when this was built — a search of the
-repository and the owner's files found no GLB, glTF, USDZ, OBJ, FBX, Blend
-or STL file, and a single front view is not enough to reconstruct one
-honestly.
+| Renderer | When | What it is |
+| --- | --- | --- |
+| **photo** | Now, in production | The approved K8 photograph (`public/images/k8-stage-alpha.png`), drawn flat in the canvas exactly where the page image sits. Not 3D: it moves and scales with the story but never rotates. |
+| **model** | Once an approved model is supplied | A real GLB/glTF K8, lit with a local room environment, framed in the same box, turning gently between front and three-quarter views (`yaw`). |
+| **dev-proxy** | Local development only (`NEXT_PUBLIC_K8_DEV_PROXY=1`) | A crude procedural stand-in, labelled on screen as *not the K8*, for testing the model path. Never deployed. |
 
-## What an upgrade needs
+In every mode the page image is shown first and stays as the fallback:
+reduced motion, no WebGL, a failed download or a lost graphics context all
+leave the photograph in place.
 
-1. **A model you are allowed to use** (owner-supplied or licensed from
-   Enagic), as `public/models/k8.glb`, that matches the real machine:
-   proportions, body shape, white finish, display position and framing,
-   labels and logos, controls, flexible pipe and fittings. Not another
-   LeveLuk model, and not a generic white box.
-2. Draco- or Meshopt-compressed geometry and KTX2/WebP textures, ideally
-   under ~3 MB.
+## The missing asset
 
-## Where it plugs in
+**No accurate K8 model exists yet.** None was found in the repository or
+the owner's files. To enable real 3D:
 
-- **Poses** — `lib/experience-poses.ts`. Add camera fields to `Pose`
-  (for example `yaw`, `pitch`, `distance`) and set them per chapter in
-  `POSES`. `mixPose` interpolates every field; the timeline (`track`,
-  `sceneAt`) and the scroll controller do not change.
-- **Renderer** — add `components/experience/K8Model.tsx`: one React Three
-  Fiber `<Canvas>` with one `useGLTF` instance, mounted once inside
-  `PersistentProductStage` in place of `ProductImageFallback`. Read the
-  current pose from a ref the controller writes to (never from React state
-  per frame), apply it in `useFrame`, and render on demand
-  (`frameloop="demand"`, invalidating on scroll) so nothing runs while idle.
-- **Loading** — keep `ProductImageFallback` as the poster until the model's
-  first frame is drawn, then remove it, so only one machine is ever visible.
-  Keep it permanently for reduced motion, missing WebGL or a failed load.
-- **Lighting** — one environment map and a key light; bake contact shadows
-  into a plane rather than using real-time shadow maps.
+1. Add the approved file at **`public/models/kangen-k8.glb`**.
+2. Set `modelUrl: "/models/kangen-k8.glb"` in **`lib/scene-config.ts`**.
+3. Rebuild. If the file fails to load, the site falls back to the
+   photograph and does not request it again during that visit.
 
-Suggested dependencies at that point: `three`, `@react-three/fiber`,
-`@react-three/drei`. They are not installed now because nothing would use
-them.
+The model must match the real machine — proportions, body shape, white
+housing, display placement and framing, labels and logos, controls, the
+flexible pipe and its fittings. Not another LeveLuk model, not a generic
+appliance. Materials are used as supplied. Aim for ≤ 5 MB; Meshopt
+compression is supported out of the box (Draco is not configured — add a
+`DRACOLoader` with locally hosted decoders if you use it).
+
+### Outlet-node convention
+
+The model must contain an empty node named **`WaterOutlet`**:
+
+- **Position:** the centre of the opening at the end of the flexible pipe.
+- **Orientation:** its **local −Y axis** is the direction water leaves the
+  nozzle (straight down for the K8's pipe as photographed).
+
+The water is attached to this node's world position and direction every
+frame, after the machine's pose is applied. If the node is missing the
+water is not shown (it would otherwise start from a guess).
+
+Model units can be anything: the model is scaled so its bounding box is
+34.5 cm tall (the K8's height, manual EN35) and centred on that box.
+
+## Where to adjust things
+
+| What | Where |
+| --- | --- |
+| Model path, outlet node name and direction, key light, environment, camera field of view | `lib/scene-config.ts` → `modelUrl`, `model` |
+| Photo outlet (nozzle position in the photograph) | `lib/scene-config.ts` → `photo.outlet` (fractions of the image box) |
+| Water speed, thickness, gravity, resolution, fade, start delay | `lib/scene-config.ts` → `water` |
+| Pixel ratio and tube detail per device tier | `lib/scene-config.ts` → `quality` |
+| Machine size, framing and yaw per chapter | `lib/experience-poses.ts` → `POSES` (`s`, `fx`/`fy`, `ox`/`oy`, `yaw`) |
+| Which chapters show water | `lib/experience-chapters.ts` → each chapter's `flow` |
+| Product box size on screen | `app/globals.css` → `.scene-anchor` |
+
+## Water-mode accuracy
+
+The stream demonstrates Kangen Water, a drinking water that the manual says
+flows from the flexible pipe (EN18); Clean Water uses the same outlet. It
+stops for Beauty, Strong Acidic (which leaves through a different pipe) and
+Strong Kangen Water, and for the cell and display close-ups. It is a visual
+demonstration, not a simulation of output rate.
