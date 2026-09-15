@@ -24,3 +24,5 @@ next-env.d.ts
 *.pem
 *.tsbuildinfo
 npm-debug.log*
+.env*
+!.env.example
