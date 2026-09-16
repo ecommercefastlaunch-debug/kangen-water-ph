@@ -159,19 +159,26 @@ two figures on that page are **not** reused.
 | Automatic rinse (~10 s) after a long run; fuller cycle after Strong Acidic Water or 24 h unused | MAN EN23 |
 | Cleaning-cycle water is not for drinking or cooking | MAN EN5, EN23, EN28 |
 | Filter reminder on screen and aloud; about 6,000 L or 1 year | MAN EN16, EN24, EN35 |
-| FC1 named as the filter Enagic Philippines sells | PH-FC1 |
+| The filter named as **F8** | Manual cover, Enagic Japan's shop, and the owner's own K8 page |
 | 100–240 V AC, 50/60 Hz, grounded outlet, approx. 230 W | MAN EN15, EN35 |
 | Improper voltage voids the warranty | MAN EN36 |
 | Full-colour display; 5 water types across 7 settings; selection shown while running | MAN EN9, EN18 |
 | Voice confirms each selection and the reminders; volume high / low / off | MAN EN16, EN18, EN20 |
-| 8 languages, display and voice | PH-K8, MAN EN16 |
+| **10** languages, display and voice | Enagic US/EU listings and the owner's own K8 page (PH-K8 and MAN EN16 say eight) |
 
-**Departures from the owner's earlier page.** It lists **10 languages**
-(adding Vietnamese and Arabic) and names the **F8** filter. This site keeps
-**8 languages** (Enagic Philippines and the manual) and **FC1** (what Enagic
-Philippines currently sells), as recorded in the conflicts table above. The
-stylised screens in the section are captioned as illustrations, not as the
-machine's own software.
+**This section follows the owner's own page.** On 2026-09-16 the owner asked
+for it to match their export exactly, so it lists **10 languages** (adding
+Vietnamese and Arabic) and names the **F8** filter, as Enagic's US/EU pages
+and their own K8 page do.
+
+**Known inconsistency.** The rest of this site still follows the Philippine
+sources: the specification table lists **8 languages**, and the FAQ and story
+name **FC1** as the filter Enagic Philippines sells. Those two statements
+disagree with this section. The owner has been told; aligning the rest is a
+one-line change in `lib/content.ts` either way.
+
+The stylised screens in the section are captioned as illustrations, not as
+the machine's own software.
 
 ## Imagery
 

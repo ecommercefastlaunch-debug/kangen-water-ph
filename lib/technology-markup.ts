@@ -113,10 +113,10 @@ export function visualHtml(kind: TechVisual): string {
     case "voice":
       return wave();
     case "plug":
-      return `<div class="k8t-card">${PLUG}<h3>Ready when water runs</h3><p>Built-in flow-rate sensor</p></div>`;
+      return `<div class="k8t-card">${PLUG}<h3>No power switch</h3><p>Water running through it is the signal</p></div>`;
     case "clean":
       return `<div class="k8t-card">${CYCLE}<h3>Rinse, then drain</h3><p>After use — automatically</p></div>`;
     case "voltage":
-      return `<div class="k8t-card"><p class="k8t-big">100–240</p><p class="k8t-sub">volts AC</p><p class="k8t-mid">50 / 60 Hz</p><p style="margin-top:0.75rem">Grounded outlet</p></div>`;
+      return `<div class="k8t-card"><p class="k8t-big">100–240</p><p class="k8t-sub">volts AC</p><p class="k8t-mid">50 / 60 Hz</p><p style="margin-top:0.75rem">Interchangeable power cord</p></div>`;
   }
 }

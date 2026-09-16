@@ -270,8 +270,12 @@ export const displayTiles = [
   { ph: "pH 8.5", tone: "daily", icon: "cup" },
 ] as const;
 
-/** The manual's language screen, as listed by Enagic Philippines (PH-K8, MAN EN16). */
-export const displayLanguages = ["日本語", "English", "Français", "Deutsch", "中文", "Italiano", "Español", "Português"] as const;
+/**
+ * The language screen. Ten, following the owner's own K8 page and Enagic's
+ * US/EU listings; Enagic Philippines and the manual list eight. The owner
+ * chose ten for this section on 2026-09-16 (docs/content-sources.md).
+ */
+export const displayLanguages = ["日本語", "English", "Français", "Deutsch", "中文", "Italiano", "Español", "Português", "Tiếng Việt", "العربية"] as const;
 
 /** Which of the section's illustrations an item shows (see lib/technology-markup.ts). */
 export type TechVisual = "wake" | "plug" | "clean" | "filter" | "voltage" | "lcd" | "voice" | "languages";
@@ -312,69 +316,69 @@ export const technology = {
     {
       id: "wake",
       spotlight: SPOT.display,
-      label: "Auto on / off",
+      label: "Auto On / Off",
       headline: "It wakes when you need it.",
-      body: "Touch the display or run water through the machine and the K8 comes on. Leave it, and it switches off by itself — after one idle minute, or up to five if you prefer.", // MAN EN17
+      body: "Touch the screen or open the tap and the K8 comes on. Leave it, and the screen and power switch off by themselves — after one minute, or up to five if you prefer.", // MAN EN17
       visual: "wake",
     },
     {
       id: "flow",
       spotlight: SPOT.base,
-      label: "Flow sensing",
-      headline: "Ready when the water runs.",
-      body: "There is nothing to start: a built-in flow-rate sensor picks up the water passing through, and the K8 ionises continuously for as long as it flows.", // MAN EN35
+      label: "Plug & Play",
+      headline: "No power switch to remember.",
+      body: "Plugged in and fed from the faucet diverter, the K8 is ready the moment water runs through it.", // owner's page; MAN EN17, EN35 (wakes on flow, built-in flow-rate sensor)
       visual: "plug",
     },
     {
       id: "cleaning",
       spotlight: SPOT.body,
       label: "Automatic cleaning",
-      headline: "It rinses itself after use.",
-      body: "After a long run of Kangen or Beauty Water the K8 rinses its cell for about ten seconds. After Strong Acidic Water, or a day unused, it runs a fuller cleaning cycle. The water it discharges while cleaning is not for use.", // MAN EN5, EN23, EN28
+      headline: "It cleans itself after you pour.",
+      body: "The K8 rinses its electrolysis cell and drains — briefly after a long run, more thoroughly after Strong Acidic Water or a day unused. The water it discharges while cleaning is not for use.", // MAN EN5, EN23, EN28
       visual: "clean",
     },
     {
       id: "filter",
       spotlight: SPOT.side,
-      label: "Filter reminder",
-      headline: "It counts the filter down.",
-      body: "The K8 tracks the water it has filtered and the days since the filter went in, then tells you on screen and aloud when a new one is due — about 6,000 litres or a year, depending on your water.", // MAN EN16, EN24, EN35
+      label: "Smart filter technology",
+      headline: "It knows when the filter is due.",
+      body: "The K8 counts litres and days on its F8 filter and tells you, on screen and aloud, when a new one is needed — as a rough guide, about 6,000 litres or a year, depending on your water.", // MAN EN16, EN24, EN35; F8 per the manual cover and the owner's page
       visual: "filter",
     },
     {
       id: "power",
       spotlight: SPOT.base,
-      label: "Worldwide voltage",
-      headline: "100–240 V, 50 or 60 Hz.",
-      body: "The K8 is rated for 100 to 240 volts AC at 50 or 60 hertz, from a grounded outlet. The manual is blunt about it: the wrong voltage voids the warranty.", // MAN EN15, EN35, EN36
+      label: "Worldwide multi-voltage",
+      headline: "100 – 240 V. 50 or 60 Hz.",
+      body: "A worldwide multi-voltage supply with an interchangeable power cord, so it takes the right plug for the country it's used in.", // MAN EN15, EN35; cord per the owner's page
       visual: "voltage",
     },
     {
       id: "display",
       spotlight: SPOT.display,
-      label: "Full-colour display",
-      headline: "Every water on one screen.",
-      body: "Five types of water across seven pH settings, each one touch away on a full-colour display, with your choice shown while the water runs.", // MAN EN9, EN18
+      label: "Full-colour LCD",
+      headline: "Everything on one screen.",
+      body: "A large full-colour touch display shows the water you've chosen and what the machine is doing, while it's doing it.", // MAN EN9, EN18
       visual: "lcd",
     },
     {
       id: "voice",
       spotlight: SPOT.display,
       label: "Voice guidance",
-      headline: "It says what it's making.",
-      body: "Every selection is confirmed aloud, and so are the reminders. The voice is set to high, low or off.", // MAN EN16, EN18, EN20
+      headline: "It tells you what it's making.",
+      body: "Every selection is confirmed aloud, and so are the reminders — filter, cleaning, water flow. Volume high, low or off.", // MAN EN16, EN18, EN20
       visual: "voice",
     },
     {
       id: "languages",
       spotlight: SPOT.display,
-      label: "Eight languages",
-      headline: "Eight languages, on screen and aloud.",
-      body: "Japanese, English, French, German, Chinese, Italian, Spanish and Portuguese — the display and the voice both follow the language you choose.", // PH-K8, MAN EN16
+      label: "10 languages",
+      headline: "Ten languages. Display and voice.",
+      body: "Japanese, English, French, German, Chinese, Italian, Spanish, Portuguese, Vietnamese and Arabic.", // owner's page and Enagic US/EU; PH-K8 and MAN EN16 list eight
       visual: "languages",
     },
   ] as TechItem[],
-  note: "Figures are from the K8 operation manual and Enagic Philippines, and vary with your water and how the machine is used. The screens here are stylised illustrations, not the machine's own software.",
+  note: "Figures follow Enagic's published information for the K8 and vary with your water and how the machine is used. The screens here are stylised illustrations, not the machine's own software.",
 } as const;
 
 /* ─────────────────────────────── Footer ───────────────────────────────── */

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { displayLanguages } from "@/lib/content";
 import { screenHtml } from "@/lib/technology-markup";
 
 const REDUCE = "(prefers-reduced-motion: reduce)";
@@ -73,7 +74,7 @@ export function TechnologyMotion() {
       let language = 0;
       timer = window.setInterval(() => {
         asleep = !asleep;
-        language = (language + 1) % 8;
+        language = (language + 1) % displayLanguages.length;
         for (const slot of root.querySelectorAll<HTMLElement>('[data-visual="wake"]')) {
           slot.innerHTML = screenHtml(asleep ? "sleep" : "home", false, 1);
         }
