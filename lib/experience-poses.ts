@@ -134,6 +134,9 @@ export function track<V>(
   ease: (t: number) => number = easeInOut,
 ): V {
   const n = values.length;
+  // A page with no layout — a hidden or zero-sized tab — has no timeline
+  // position at all. Start the story at its beginning rather than failing.
+  if (!Number.isFinite(T)) return values[0];
   for (let i = 0; i < n; i++) {
     const holdStart = i === 0 ? -Infinity : starts[i] + HOLD.start * units[i];
     const holdEnd = i === n - 1 ? Infinity : starts[i] + HOLD.end * units[i];
@@ -196,6 +199,7 @@ export function textState(
 ): { opacity: number; shift: number } {
   const n = units.length;
   const l = (T - starts[i]) / units[i];
+  if (!Number.isFinite(l)) return { opacity: i === 0 ? 1 : 0, shift: 0 };
   if (i > 0 && l < TEXT.inEnd) {
     const t = easeInOut(clamp((l - TEXT.inStart) / (TEXT.inEnd - TEXT.inStart)));
     return { opacity: t, shift: 1 - t };

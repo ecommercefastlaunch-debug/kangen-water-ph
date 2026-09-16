@@ -71,7 +71,8 @@ export function StoryController() {
     let raf = 0;
 
     const measure = () => {
-      vh = probe.offsetHeight || window.innerHeight;
+      // Never zero: a hidden or zero-sized tab measures 0, and 0/0 would leave the timeline position undefined.
+      vh = probe.offsetHeight || window.innerHeight || 1;
       top = story.getBoundingClientRect().top + window.scrollY;
     };
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { beatsFor, chapters, totalUnits } from "@/lib/experience-chapters";
-import { HOLD, layout, POSES, poseTransform, sceneAt, TEXT, textState, track, viewAt, viewLayers } from "@/lib/experience-poses";
+import { HOLD, layout, lerp, POSES, poseTransform, sceneAt, TEXT, textState, track, viewAt, viewLayers } from "@/lib/experience-poses";
 
 const wide = beatsFor(true);
 const units = wide.map((b) => b.units);
@@ -51,6 +51,18 @@ describe("sceneAt", () => {
   it("is reversible: the same position always gives the same state", () => {
     const T = starts[8] + 0.9;
     expect(sceneAt(T, wide, starts)).toEqual(sceneAt(T, wide, starts));
+  });
+});
+
+describe("a page with no layout (a hidden or zero-sized tab)", () => {
+  // There, the viewport measures 0 and the timeline position works out as 0/0.
+  it("starts the story at the beginning instead of failing", () => {
+    expect(sceneAt(NaN, wide, starts).pose).toEqual(wide[0].pose);
+    expect(sceneAt(NaN, wide, starts).bg).toEqual(wide[0].bg);
+    expect(track(NaN, units, starts, chapters.map((c) => c.flow), lerp)).toBe(chapters[0].flow);
+    expect(viewAt(NaN, units, starts, chapters.map((c) => c.view))).toBe(chapters[0].view);
+    expect(textState(NaN, 0, units, starts)).toEqual({ opacity: 1, shift: 0 });
+    expect(textState(NaN, 4, units, starts)).toEqual({ opacity: 0, shift: 0 });
   });
 });
 
