@@ -55,11 +55,12 @@ python3 scripts/product-images/prepare-angle.py assets/product-images/k8-angle-s
 ```
 
 1. `lift.swift` makes a soft subject mask with Apple Vision (on-device, macOS 14+).
-2. `prepare-angle.py` tightens the alpha slightly, un-mixes edge pixels from
-   the original backdrop (no light halo), and pads the cutout onto a square
-   canvas so the machine's visible height, ground line and centre of mass
-   match the front image. It prints the nozzle position for
-   `photo.views.angle.outlet`.
+2. `prepare-angle.py` paints out the areas listed in its `REMOVE` constant
+   (filling them from the surrounding body), tightens the alpha slightly,
+   un-mixes edge pixels from the original backdrop (no light halo), and pads
+   the cutout onto a square canvas so the machine's visible height, ground
+   line and centre of mass match the front image. It prints the nozzle
+   position for `photo.views.angle.outlet`.
 
 The original is kept unchanged in `assets/product-images/` (not served).
 
@@ -75,11 +76,15 @@ manual, it differs in ways that matter:
   is no 11.5 setting (Strong Kangen is about 11.0). The icons and colours
   differ from the real display too. The display is only a few pixels tall in
   the angled chapters; the close-up (Control) uses the front photograph.
-- **Label**: a gold "WQA" seal, "C … USA" and text claiming NSF/ANSI 42, 53,
-  58 and 372 certification and a "Japanese Patent US 8,497,413 B2". None of
-  this is on the authentic photograph or in the verified sources, NSF/ANSI 58
-  is a reverse-osmosis standard, and the lettering is partly garbled. The
-  text is unreadable at stage size, but the seal is visible.
+- **Label**: the image carried a gold "WQA" seal with "C … USA" marks and a
+  paragraph claiming NSF/ANSI 42, 53, 58 and 372 certification and a
+  "Japanese Patent US 8,497,413 B2". None of this is on the authentic
+  photograph or in the verified sources, NSF/ANSI 58 is a reverse-osmosis
+  standard, and the lettering is partly garbled. **The seal and its C / USA
+  marks were painted out** at the owner's request (2026-09-16;
+  `REMOVE` in `scripts/product-images/prepare-angle.py`) — it was the only
+  part legible at stage size. The paragraph beside it is still in the image;
+  it is unreadable on the stage, and the site makes no certification claim.
 - **Secondary hose**: a second hose leaves the base and rises to an upright
   nozzle beside the machine. The manual (EN10) says the secondary pipe must
   be kept lower than the machine, running to the sink.

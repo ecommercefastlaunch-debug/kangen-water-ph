@@ -7,14 +7,17 @@ MASK    the soft subject mask from lift.swift
 FRONT   the existing front-view cutout (public/images/k8-stage-alpha.png)
 OUT     the prepared transparent image (public/images/k8-angle-alpha.png)
 
-Steps — the machine's pixels are never scaled, warped, recoloured or redrawn:
+Steps — apart from the retouch in step 1, the machine's pixels are never
+scaled, warped, recoloured or redrawn:
 
-  1. alpha:  the mask, very slightly tightened so edges stay crisp;
-  2. colour: edge pixels are un-mixed from the local background colour, so
-             no light halo from the original backdrop remains;
-  3. frame:  the cutout is padded onto a square canvas sized so that, once
-             both images fill the same stage box, the machine's visible
-             height, ground line and centre of mass match the front view's.
+  1. retouch: the certification seal is filled in from the surrounding body
+              (see REMOVE below);
+  2. alpha:   the mask, very slightly tightened so edges stay crisp;
+  3. colour:  edge pixels are un-mixed from the local background colour, so
+              no light halo from the original backdrop remains;
+  4. frame:   the cutout is padded onto a square canvas sized so that, once
+              both images fill the same stage box, the machine's visible
+              height, ground line and centre of mass match the front view's.
 
 Prints the placement and the flexible pipe's nozzle position (u, v as
 fractions of the square) as JSON, for lib/scene-config.ts.
@@ -25,6 +28,44 @@ import sys
 
 import numpy as np
 from PIL import Image
+
+
+# Areas of the source painted out with the body behind them, as (x0, y0, x1, y1).
+#
+# The angled image is AI-generated and carried a gold "WQA" seal with C / USA
+# marks on the body — a certification mark that is not verified for this
+# machine and does not appear on the authentic front photograph. The owner
+# asked for it to be removed (2026-09-16). The rectangle covers the seal and
+# those marks only; it stops short of the label paragraph (which starts at
+# x 918) and of the display panel on the left (which ends at x 803).
+REMOVE = [(826, 668, 915, 769)]
+
+
+def fill_from_edges(rgb, box, smoothing=400):
+    """Replace a rectangle with a surface grown from its own border.
+
+    A Coons patch between the four border lines, relaxed a little, so the
+    body's shading runs through the patched area without a seam. It suits a
+    plain, smoothly lit surface — check the result before trusting it.
+    """
+    x0, y0, x1, y1 = box
+    region = rgb[y0 - 1 : y1 + 1, x0 - 1 : x1 + 1].astype(np.float64).copy()
+    h, w = y1 - y0, x1 - x0
+    u = np.linspace(0, 1, h + 2)[:, None, None]
+    v = np.linspace(0, 1, w + 2)[None, :, None]
+    top, bottom = region[0][None], region[-1][None]
+    left, right = region[:, 0][:, None], region[:, -1][:, None]
+    corners = (
+        (1 - u) * (1 - v) * region[0, 0]
+        + (1 - u) * v * region[0, -1]
+        + u * (1 - v) * region[-1, 0]
+        + u * v * region[-1, -1]
+    )
+    patch = (1 - u) * top + u * bottom + (1 - v) * left + v * right - corners
+    region[1:-1, 1:-1] = patch[1:-1, 1:-1]
+    for _ in range(smoothing):  # relax towards a smooth (Laplace) surface, border fixed
+        region[1:-1, 1:-1] = 0.25 * (region[:-2, 1:-1] + region[2:, 1:-1] + region[1:-1, :-2] + region[1:-1, 2:])
+    rgb[y0:y1, x0:x1] = region[1:-1, 1:-1]
 
 
 def box_sum(a, r):
@@ -70,10 +111,14 @@ def main(source, mask_path, front_path, out_path, preview=None):
     front_a = front[..., 3] / 255
     assert src.shape[:2] == m.shape, "mask and source sizes differ"
 
-    # 1. Alpha.
+    # 1. Retouch (the source file itself is never modified).
+    for box in REMOVE:
+        fill_from_edges(src, box)
+
+    # 2. Alpha.
     a = np.clip((m - 0.04) / 0.92, 0, 1)
 
-    # 2. Colour: C = a·F + (1 − a)·B  →  F = (C − (1 − a)·B) / a, with B the nearby backdrop.
+    # 3. Colour: C = a·F + (1 − a)·B  →  F = (C − (1 − a)·B) / a, with B the nearby backdrop.
     backdrop = local_mean(src, (m < 0.02).astype(np.float64), (10, 30, 90))
     inside = local_mean(src, (m > 0.98).astype(np.float64), (6, 20, 60))
     unmixed = (src - (1 - a[..., None]) * backdrop) / np.maximum(a, 1e-3)[..., None]
@@ -81,7 +126,7 @@ def main(source, mask_path, front_path, out_path, preview=None):
     rgb = np.where(a[..., None] >= 0.98, src, w * unmixed + (1 - w) * inside)
     rgb = np.clip(rgb, 0, 255)
 
-    # 3. Frame, matched to the front view.
+    # 4. Frame, matched to the front view.
     fb, ab = bounds(front_a), bounds(a)
     fsize = front_a.shape[0]
     fh = fb["y1"] - fb["y0"] + 1
