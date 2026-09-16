@@ -265,12 +265,28 @@ export type TechPanel =
   | { kind: "quote"; quote: string; rows: string[]; caption: string }
   | { kind: "list"; items: string[]; caption: string };
 
+/**
+ * The part of the machine each item is about, as percentages of the product
+ * image box. The stage draws a lit rectangle there and dims the rest, moving
+ * it from item to item as the section is read.
+ */
+export type TechSpotlight = { left: string; top: string; width: string; height: string };
+
+/** The display panel, the base, the whole body, the side where the filter sits. */
+const SPOT = {
+  display: { left: "45.4%", top: "17.6%", width: "16.6%", height: "45%" },
+  base: { left: "27%", top: "82%", width: "54%", height: "10%" },
+  body: { left: "22.5%", top: "13.5%", width: "62%", height: "71%" },
+  side: { left: "22.5%", top: "14%", width: "23.5%", height: "48%" },
+} satisfies Record<string, TechSpotlight>;
+
 export type TechItem = {
   id: string;
   label: string;
   headline: string;
   body: string;
   panel: TechPanel;
+  spotlight: TechSpotlight;
 };
 
 /**
@@ -285,6 +301,7 @@ export const technology = {
   items: [
     {
       id: "wake",
+      spotlight: SPOT.display,
       label: "Auto on / off",
       headline: "It wakes when you need it.",
       body: "Touch the display or run water through the machine and the K8 comes on. Leave it, and it switches off by itself — after one idle minute, or up to five if you prefer.", // MAN EN17
@@ -292,6 +309,7 @@ export const technology = {
     },
     {
       id: "flow",
+      spotlight: SPOT.base,
       label: "Flow sensing",
       headline: "Ready when the water runs.",
       body: "There is nothing to start: a built-in flow-rate sensor picks up the water passing through, and the K8 ionises continuously for as long as it flows.", // MAN EN35
@@ -303,6 +321,7 @@ export const technology = {
     },
     {
       id: "cleaning",
+      spotlight: SPOT.body,
       label: "Automatic cleaning",
       headline: "It rinses itself after use.",
       body: "After a long run of Kangen or Beauty Water the K8 rinses its cell for about ten seconds. After Strong Acidic Water, or a day unused, it runs a fuller cleaning cycle.", // MAN EN23
@@ -314,6 +333,7 @@ export const technology = {
     },
     {
       id: "filter",
+      spotlight: SPOT.side,
       label: "Filter reminder",
       headline: "It counts the filter down.",
       body: "The K8 tracks the water it has filtered and the days since the filter went in, then tells you on screen and aloud when a new one is due.", // MAN EN16, EN24
@@ -330,6 +350,7 @@ export const technology = {
     },
     {
       id: "power",
+      spotlight: SPOT.base,
       label: "Worldwide voltage",
       headline: "100–240 V, 50 or 60 Hz.",
       body: "The K8 is rated for 100 to 240 volts AC at 50 or 60 hertz, from a grounded outlet. The manual is blunt about it: the wrong voltage voids the warranty.", // MAN EN15, EN35, EN36
@@ -346,6 +367,7 @@ export const technology = {
     },
     {
       id: "display",
+      spotlight: SPOT.display,
       label: "Full-colour display",
       headline: "Every water on one screen.",
       body: "Five types of water across seven pH settings, each one touch away on a full-colour display, with your choice shown while the water runs.", // MAN EN9, EN18
@@ -359,6 +381,7 @@ export const technology = {
     },
     {
       id: "voice",
+      spotlight: SPOT.display,
       label: "Voice guidance",
       headline: "It says what it's making.",
       body: "Every selection is confirmed aloud, and so are the reminders. The voice is set to high, low or off.", // MAN EN16, EN18, EN20
@@ -371,6 +394,7 @@ export const technology = {
     },
     {
       id: "languages",
+      spotlight: SPOT.display,
       label: "Eight languages",
       headline: "Eight languages, on screen and aloud.",
       body: "Japanese, English, French, German, Chinese, Italian, Spanish and Portuguese — the display and the voice both follow the language you choose.", // PH-K8, MAN EN16

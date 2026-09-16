@@ -27,6 +27,8 @@
 
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  /* The easing the owner's own technology section uses. */
+  --ease-tech: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 :root {
@@ -372,49 +374,68 @@ body {
   font-weight: 600;
 }
 
-/* ───────────────────────────── Technology rows ────────────────────────── */
+/* ─────────────────────────── Technology section ───────────────────────── */
 
 /*
- * Eight rows: copy on the left, its illustration on the right. On wide
- * screens each illustration stays with its copy while that row passes, so
- * the reader never loses the pairing. Items rise in once (data-visible) and
- * the row being read is marked (data-current). The static mode in
- * lib/technology-static-css.ts undoes all of it.
+ * The mechanics of the owner's own K8 page: the list runs down the left and
+ * a stage stays beside it, holding the machine with a lit rectangle over the
+ * part each item describes, and that item's illustration. The rectangle
+ * moves and resizes (900ms), the illustrations cross-fade (700ms), and the
+ * current item's number takes the accent colour (500ms). The heading rises a
+ * line at a time out of clipped boxes.
+ *
+ * The static mode in lib/technology-static-css.ts undoes all of it.
  */
-.tech-grid {
+.tech-line {
+  display: block;
+  overflow: hidden;
+  margin-bottom: -0.08em;
+  padding-bottom: 0.08em;
+}
+
+.tech-line > span {
+  display: block;
+  transform: translateY(105%);
+  transition: transform 900ms var(--ease-tech);
+}
+
+[data-tech-heading][data-visible] .tech-line > span {
+  transform: none;
+}
+
+[data-tech-heading] .tech-line:nth-child(2) > span {
+  transition-delay: 90ms;
+}
+
+.tech-layout {
   display: grid;
-  gap: 4.5rem;
+}
+
+.tech-items {
   list-style: none;
 }
 
 .tech-row {
-  display: grid;
-  gap: 2rem;
+  padding-block: 3rem;
+  border-bottom: 1px solid var(--color-line);
 }
 
-.tech-item {
-  opacity: 0;
-  transform: translate3d(0, 26px, 0);
-  transition:
-    opacity 700ms var(--ease-out),
-    transform 700ms var(--ease-out);
+.tech-row:last-child {
+  border-bottom: 0;
 }
 
-.tech-item[data-visible] {
-  opacity: 1;
-  transform: none;
-}
-
+/* The current item's number is the one in colour. */
 .tech-index {
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   font-weight: 500;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
   color: var(--color-mute);
+  font-variant-numeric: tabular-nums;
+  transition: color 500ms ease;
 }
 
-.tech-index-num {
+.tech-row[data-current] .tech-index {
   color: var(--color-glacier);
-  font-variant-numeric: tabular-nums;
 }
 
 .tech-headline {
@@ -435,14 +456,18 @@ body {
   color: var(--color-ink-soft);
 }
 
-.tech-panel-wrap {
-  opacity: 0;
-  transition: opacity 700ms var(--ease-out);
+/* Narrow screens: every row carries its own illustration, and there is no stage. */
+.tech-panel-inline {
+  display: flex;
+  justify-content: center;
+  margin-top: 2.5rem;
+  border-radius: var(--radius-md);
+  background: var(--color-ice-soft);
+  padding: 2.5rem 1.25rem;
 }
 
-.tech-item[data-visible] ~ .tech-panel-wrap,
-.tech-row:has([data-visible]) .tech-panel-wrap {
-  opacity: 1;
+.tech-stage {
+  display: none;
 }
 
 /* ── The illustrations ── */
@@ -637,44 +662,92 @@ body {
 }
 
 @media (min-width: 1024px) {
-  .tech-grid {
-    gap: 0;
+  .tech-layout {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 2.5rem;
   }
 
-  /*
-   * One row per screen: a single item is read at a time. Both cells stick to
-   * the same line, so a row's copy and its illustration always sit level
-   * with each other, then hand over together to the next row.
-   */
+  .tech-items {
+    grid-column: span 5 / span 5;
+  }
+
   .tech-row {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    column-gap: 5rem;
-    align-items: start;
-    /*
-     * Taller than a screen, so a row has left before the next one's copy
-     * arrives: only one item is on screen at a time. Both cells stick to the
-     * same line, so copy and illustration stay level with each other.
-     */
-    min-height: 124svh;
-  }
-
-  .tech-item,
-  .tech-panel-wrap {
-    position: sticky;
-    top: calc(var(--header-h) + 10svh);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 66svh;
     padding-block: 0;
-    /* Reserve the reading band, so the next row cannot rise into it. */
-    min-height: 58svh;
+    border-bottom: 0;
   }
 
-  .tech-panel-wrap {
-    justify-self: end;
-    width: min(100%, 30rem);
+  .tech-panel-inline {
+    display: none;
   }
 
-  /* The first row begins right under the heading, with no empty screen between. */
-  .tech-row:first-child {
-    min-height: 104svh;
+  /* The stage stays beside the list while it is read. */
+  .tech-stage {
+    display: block;
+    grid-column: span 7 / span 7;
+  }
+
+  .tech-stage-inner {
+    position: sticky;
+    top: calc(var(--header-h) + 5svh);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    height: 80svh;
+    padding-inline: 1.5rem;
+    border-radius: var(--radius-lg);
+    background: radial-gradient(70% 60% at 38% 50%, #fff 0%, var(--color-ice-soft) 100%);
+    overflow: hidden;
+  }
+
+  .tech-photo {
+    position: relative;
+    flex: none;
+    width: 54%;
+    aspect-ratio: 1;
+  }
+
+  /* The part being described stays lit; everything around it is dimmed back. */
+  .tech-spot {
+    position: absolute;
+    border: 1px solid var(--color-glacier);
+    border-radius: 14px;
+    box-shadow: 0 0 0 2000px rgb(238 245 248 / 0.62);
+    transition: all 900ms var(--ease-tech);
+    pointer-events: none;
+  }
+
+  .tech-layers {
+    position: relative;
+    flex: 1;
+    height: 100%;
+    max-width: 20rem;
+  }
+
+  .tech-layer {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: translateY(0.5rem);
+    transition:
+      opacity 700ms var(--ease-tech),
+      transform 700ms var(--ease-tech);
+  }
+
+  .tech-layer[data-active] {
+    opacity: 1;
+    transform: none;
+  }
+
+  .tech-layer .tech-card {
+    width: 100%;
+    padding: 1.25rem;
   }
 }
 
