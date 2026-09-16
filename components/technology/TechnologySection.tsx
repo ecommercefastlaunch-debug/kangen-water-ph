@@ -1,70 +1,95 @@
+import Image from "next/image";
 import { technology } from "@/lib/content";
-import { TECH_STATIC_CSS } from "@/lib/technology-static-css";
-import { TechnologyPanel } from "./TechnologyPanel";
-import { TechnologyReveal } from "./TechnologyReveal";
-import { TechnologyStage } from "./TechnologyStage";
+import { TECHNOLOGY_CSS } from "@/lib/technology-css";
+import { visualHtml } from "@/lib/technology-markup";
+import front from "@/public/images/k8-stage-alpha.png";
+import { TechnologyMotion } from "./TechnologyMotion";
 
 /**
- * Eight things the K8 does on its own, read one at a time.
+ * Eight things the K8 does on its own.
  *
- * The list runs down the left; on wide screens a stage stays beside it with
- * the machine, a lit rectangle over the part being described, and that
- * item's illustration — the rectangle moves and the illustrations cross-fade
- * as the reader goes down the list, and the current item's number takes the
- * accent colour. On narrow screens each row simply carries its own
- * illustration. Reduced motion and no-JS get that plain version too.
+ * This is the owner's own section from kangen.ph, ported from the portable
+ * export they supplied (exports/technology-section.html): the same markup,
+ * the same styles, and the same behaviour — on wide screens the machine
+ * stays pinned while the features pass, a spotlight moves to the part each
+ * feature is about, and the picture beside it changes; on narrow screens the
+ * machine is shown once at the top and every feature carries its own
+ * picture.
  *
- * No navigation, no buttons: the only call to action on the page stays the
- * one in the header.
+ * What differs here: the photograph is this site's own, the copy is this
+ * site's sourced wording (docs/content-sources.md), the illustrations are
+ * rendered on the server so they survive with JavaScript off, and the pinned
+ * stage clears this site's fixed header.
  */
 export function TechnologySection() {
   const { eyebrow, headline, items, note } = technology;
   const total = String(items.length).padStart(2, "0");
+  const first = items[0].spotlight;
 
   return (
-    <section id="technology" aria-labelledby="technology-title" className="bg-white">
-      <style dangerouslySetInnerHTML={{ __html: `@media (prefers-reduced-motion: reduce){${TECH_STATIC_CSS}}` }} />
-      <noscript dangerouslySetInnerHTML={{ __html: `<style>${TECH_STATIC_CSS}</style>` }} />
+    <section className="k8t" id="technology" aria-labelledby="k8t-title">
+      <style dangerouslySetInnerHTML={{ __html: TECHNOLOGY_CSS }} />
 
-      <div className="container-page pt-[var(--section-y)]">
-        <p className="eyebrow text-glacier">{eyebrow}</p>
-        <h2 id="technology-title" className="type-display-md mt-5 text-ink" data-tech-heading>
-          <span className="tech-line">
-            <span>{headline[0]}</span>
-          </span>
-          <span className="tech-line">
-            <span className="type-light text-ink-soft">{headline[1]}</span>
-          </span>
+      <div className="k8t-wrap k8t-head">
+        <p className="k8t-eyebrow">{eyebrow}</p>
+        <h2 className="k8t-title" id="k8t-title">
+          {headline[0]}
+          <br />
+          {headline[1]}
         </h2>
       </div>
 
-      <div className="container-page tech-layout pb-[var(--section-y)]" data-tech>
-        <ol className="tech-items">
+      <div className="k8t-wrap k8t-grid">
+        <div className="k8t-shot">
+          <Image src={front} alt="" aria-hidden="true" sizes="(min-width: 1024px) 40vw, 90vw" />
+        </div>
+
+        <ol className="k8t-list">
           {items.map((item, i) => (
-            <li key={item.id} className="tech-row" data-tech-row={i} data-tech-item={i}>
-              <p className="tech-index">
-                <span className="tech-index-num">
-                  {String(i + 1).padStart(2, "0")} / {total}
-                </span>
-                <span className="tech-index-label"> — {item.label}</span>
+            <li
+              key={item.id}
+              className={i === 0 ? "k8t-item is-active" : "k8t-item"}
+              data-spot={`${item.spotlight.left},${item.spotlight.top},${item.spotlight.width},${item.spotlight.height}`}
+            >
+              <p className="k8t-count">
+                {String(i + 1).padStart(2, "0")} / {total} — {item.label}
               </p>
-              <h3 className="tech-headline">{item.headline}</h3>
-              <p className="tech-body">{item.body}</p>
-              <div className="tech-panel-inline">
-                <TechnologyPanel panel={item.panel} />
-              </div>
+              <h3 className="k8t-statement">{item.headline}</h3>
+              <p className="k8t-detail">{item.body}</p>
+              <div className="k8t-inline" data-visual={item.visual} dangerouslySetInnerHTML={{ __html: visualHtml(item.visual) }} />
             </li>
           ))}
         </ol>
 
-        <TechnologyStage items={items} />
+        <div className="k8t-stage">
+          <div className="k8t-sticky">
+            <div className="k8t-product">
+              <Image src={front} alt="" aria-hidden="true" sizes="40vw" />
+              <span
+                className="k8t-spot"
+                aria-hidden="true"
+                style={{ left: first.left, top: first.top, width: first.width, height: first.height }}
+              />
+            </div>
+            <div className="k8t-visuals" aria-hidden="true">
+              {items.map((item, i) => (
+                <div
+                  key={item.id}
+                  className={i === 0 ? "k8t-visual is-active" : "k8t-visual"}
+                  data-visual={item.visual}
+                  dangerouslySetInnerHTML={{ __html: visualHtml(item.visual) }}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="container-page pb-[var(--section-y)]">
-        <p className="tech-note">{note}</p>
+      <div className="k8t-wrap">
+        <p className="k8t-note">{note}</p>
       </div>
 
-      <TechnologyReveal />
+      <TechnologyMotion />
     </section>
   );
 }
