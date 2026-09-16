@@ -33,12 +33,15 @@ from PIL import Image
 # Areas of the source painted out with the body behind them, as (x0, y0, x1, y1).
 #
 # The angled image is AI-generated and carried a gold "WQA" seal with C / USA
-# marks on the body — a certification mark that is not verified for this
-# machine and does not appear on the authentic front photograph. The owner
-# asked for it to be removed (2026-09-16). The rectangle covers the seal and
-# those marks only; it stops short of the label paragraph (which starts at
-# x 918) and of the display panel on the left (which ends at x 803).
-REMOVE = [(826, 668, 915, 769)]
+# marks and a paragraph claiming NSF/ANSI certification and a patent number —
+# none of it verified for this machine, none of it on the authentic front
+# photograph, and the lettering partly garbled. The owner asked for the seal
+# and then the text to be removed (2026-09-16).
+#
+# The rectangle spans the plain body between the display panel (which ends at
+# x 803) and the body's right edge (about x 1090), and stops 17 px above the
+# horizontal panel seam at y 787, which stays intact.
+REMOVE = [(826, 668, 1050, 770)]
 
 
 def fill_from_edges(rgb, box, smoothing=400):

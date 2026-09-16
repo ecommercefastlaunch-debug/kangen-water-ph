@@ -97,10 +97,10 @@ Both product images were supplied by the owner and differ from the real K8
 in places (see the imagery notes in `docs/content-sources.md` and
 `docs/3d-model-upgrade.md`):
 
-- `public/images/k8-angle-alpha.png` — **AI-generated**; its display, a
-  label paragraph and a second hose don't match the K8 (its unverifiable
-  "WQA" seal is painted out during preparation). Replace first, with an
-  authentic angled photograph, using `scripts/product-images/`.
+- `public/images/k8-angle-alpha.png` — **AI-generated**; its display and a
+  second hose don't match the K8 (its unverifiable "WQA" seal and the
+  certification label text are painted out during preparation). Replace
+  first, with an authentic angled photograph, using `scripts/product-images/`.
 - `public/images/k8-stage-alpha.png` — the front photograph; one display
   tile reads pH 6.5 instead of 8.5. Replace with an official Enagic product
   photograph (square, transparent ground, ≥ 1200 px; the nozzle position in

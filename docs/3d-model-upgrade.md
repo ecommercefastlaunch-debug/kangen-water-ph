@@ -80,11 +80,12 @@ manual, it differs in ways that matter:
   paragraph claiming NSF/ANSI 42, 53, 58 and 372 certification and a
   "Japanese Patent US 8,497,413 B2". None of this is on the authentic
   photograph or in the verified sources, NSF/ANSI 58 is a reverse-osmosis
-  standard, and the lettering is partly garbled. **The seal and its C / USA
-  marks were painted out** at the owner's request (2026-09-16;
-  `REMOVE` in `scripts/product-images/prepare-angle.py`) — it was the only
-  part legible at stage size. The paragraph beside it is still in the image;
-  it is unreadable on the stage, and the site makes no certification claim.
+  standard, and the lettering is partly garbled. **All of it — the seal, its
+  C / USA marks and the paragraph — was painted out** at the owner's request
+  (2026-09-16; `REMOVE` in `scripts/product-images/prepare-angle.py`), filled
+  in from the surrounding body. The display panel and the horizontal panel
+  seam below the label are untouched, and the site makes no certification
+  claim.
 - **Secondary hose**: a second hose leaves the base and rises to an upright
   nozzle beside the machine. The manual (EN10) says the secondary pipe must
   be kept lower than the machine, running to the sink.
