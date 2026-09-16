@@ -146,6 +146,33 @@ ORP, "active oxygen", hydrogen and a Japanese medical-device certification
 forbids turning technical properties into health claims, and the Japanese
 certification does not apply in the Philippines.
 
+## Technology section (eight items)
+
+Added 2026-09-16 at the owner's request, following the structure of their
+earlier page (kangen.ph). Each claim is re-checked against the sources above;
+two figures on that page are **not** reused.
+
+| Claim | Source |
+| --- | --- |
+| Auto on / off: wakes on touch or water flow, switches off after 1–5 idle minutes | MAN EN17 |
+| Continuous ionizing with a built-in flow-rate sensor | MAN EN35 |
+| Automatic rinse (~10 s) after a long run; fuller cycle after Strong Acidic Water or 24 h unused | MAN EN23 |
+| Cleaning-cycle water is not for drinking or cooking | MAN EN5, EN23, EN28 |
+| Filter reminder on screen and aloud; about 6,000 L or 1 year | MAN EN16, EN24, EN35 |
+| FC1 named as the filter Enagic Philippines sells | PH-FC1 |
+| 100–240 V AC, 50/60 Hz, grounded outlet, approx. 230 W | MAN EN15, EN35 |
+| Improper voltage voids the warranty | MAN EN36 |
+| Full-colour display; 5 water types across 7 settings; selection shown while running | MAN EN9, EN18 |
+| Voice confirms each selection and the reminders; volume high / low / off | MAN EN16, EN18, EN20 |
+| 8 languages, display and voice | PH-K8, MAN EN16 |
+
+**Departures from the owner's earlier page.** It lists **10 languages**
+(adding Vietnamese and Arabic) and names the **F8** filter. This site keeps
+**8 languages** (Enagic Philippines and the manual) and **FC1** (what Enagic
+Philippines currently sells), as recorded in the conflicts table above. The
+stylised screens in the section are captioned as illustrations, not as the
+machine's own software.
+
 ## Imagery
 
 The page shows one machine, in the persistent story stage, from two

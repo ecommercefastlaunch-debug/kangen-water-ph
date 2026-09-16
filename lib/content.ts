@@ -255,6 +255,135 @@ export const faqs: { q: string; a: string[] }[] = [
   },
 ];
 
+/* ─────────────────────────────── Technology ───────────────────────────── */
+
+/** What each item shows beside its copy. Stylised panels — never a photograph of the machine. */
+export type TechPanel =
+  | { kind: "screen"; title: string; lines?: string[]; rows?: [string, string][]; tiles?: string[]; footer?: string; caption?: string }
+  | { kind: "steps"; steps: string[]; caption: string }
+  | { kind: "stat"; value: string; unit: string; rows: [string, string][] }
+  | { kind: "quote"; quote: string; rows: string[]; caption: string }
+  | { kind: "list"; items: string[]; caption: string };
+
+export type TechItem = {
+  id: string;
+  label: string;
+  headline: string;
+  body: string;
+  panel: TechPanel;
+};
+
+/**
+ * Eight things the K8 does on its own, read one at a time as the page
+ * scrolls. Every figure is the operation manual's; where Enagic's own
+ * sources disagree (languages, filter model) the Philippine source is used,
+ * as everywhere else on this site.
+ */
+export const technology = {
+  eyebrow: "Technology",
+  headline: ["Built to think", "for itself."] as [string, string],
+  items: [
+    {
+      id: "wake",
+      label: "Auto on / off",
+      headline: "It wakes when you need it.",
+      body: "Touch the display or run water through the machine and the K8 comes on. Leave it, and it switches off by itself — after one idle minute, or up to five if you prefer.", // MAN EN17
+      panel: { kind: "screen", title: "LeveLuk K8", lines: ["Touch the screen", "or open the tap"], footer: "KANGEN 8" },
+    },
+    {
+      id: "flow",
+      label: "Flow sensing",
+      headline: "Ready when the water runs.",
+      body: "There is nothing to start: a built-in flow-rate sensor picks up the water passing through, and the K8 ionises continuously for as long as it flows.", // MAN EN35
+      panel: {
+        kind: "steps",
+        steps: ["Open the tap", "The flow-rate sensor picks it up", "Ionising continues while it runs"],
+        caption: "The manual calls it a continuous ionizing system with a built-in flow-rate sensor.",
+      },
+    },
+    {
+      id: "cleaning",
+      label: "Automatic cleaning",
+      headline: "It rinses itself after use.",
+      body: "After a long run of Kangen or Beauty Water the K8 rinses its cell for about ten seconds. After Strong Acidic Water, or a day unused, it runs a fuller cleaning cycle.", // MAN EN23
+      panel: {
+        kind: "steps",
+        steps: ["About 10 seconds after a long run", "A fuller cycle after Strong Acidic Water", "…or after a day unused"],
+        caption: "Water discharged during cleaning is not for drinking or cooking.", // MAN EN5, EN23, EN28
+      },
+    },
+    {
+      id: "filter",
+      label: "Filter reminder",
+      headline: "It counts the filter down.",
+      body: "The K8 tracks the water it has filtered and the days since the filter went in, then tells you on screen and aloud when a new one is due.", // MAN EN16, EN24
+      panel: {
+        kind: "screen",
+        title: "Filter check",
+        rows: [
+          ["Total quantity", "≈ 6,000 L"],
+          ["Total time", "≈ 1 year"],
+        ],
+        footer: "FC1 — the filter Enagic Philippines sells", // MAN EN24, EN35; PH-FC1
+        caption: "A rough guide: both vary with your water.",
+      },
+    },
+    {
+      id: "power",
+      label: "Worldwide voltage",
+      headline: "100–240 V, 50 or 60 Hz.",
+      body: "The K8 is rated for 100 to 240 volts AC at 50 or 60 hertz, from a grounded outlet. The manual is blunt about it: the wrong voltage voids the warranty.", // MAN EN15, EN35, EN36
+      panel: {
+        kind: "stat",
+        value: "100–240",
+        unit: "volts AC",
+        rows: [
+          ["Frequency", "50 / 60 Hz"],
+          ["Outlet", "Grounded"],
+          ["Maximum draw", "Approx. 230 W"],
+        ],
+      },
+    },
+    {
+      id: "display",
+      label: "Full-colour display",
+      headline: "Every water on one screen.",
+      body: "Five types of water across seven pH settings, each one touch away on a full-colour display, with your choice shown while the water runs.", // MAN EN9, EN18
+      panel: {
+        kind: "screen",
+        title: "Kangen Water",
+        tiles: ["Kangen 9.5", "Kangen 9.0", "Kangen 8.5", "Clean 7.0", "Beauty 6.0", "Strong Acidic 2.5", "Strong Kangen 11.0"],
+        footer: "KANGEN 8",
+        caption: "Stylised home screen, drawn from the manual — not the machine's own software.",
+      },
+    },
+    {
+      id: "voice",
+      label: "Voice guidance",
+      headline: "It says what it's making.",
+      body: "Every selection is confirmed aloud, and so are the reminders. The voice is set to high, low or off.", // MAN EN16, EN18, EN20
+      panel: {
+        kind: "quote",
+        quote: "“Kangen Water 9.5”",
+        rows: ["Volume: high · low · off"],
+        caption: "Spoken confirmation of the setting you chose.",
+      },
+    },
+    {
+      id: "languages",
+      label: "Eight languages",
+      headline: "Eight languages, on screen and aloud.",
+      body: "Japanese, English, French, German, Chinese, Italian, Spanish and Portuguese — the display and the voice both follow the language you choose.", // PH-K8, MAN EN16
+      panel: {
+        kind: "list",
+        items: ["日本語", "English", "Français", "Deutsch", "中文", "Italiano", "Español", "Português"],
+        caption: "Display and voice.",
+      },
+    },
+  ] as TechItem[],
+  note: "Figures are from the K8 operation manual and Enagic Philippines, and vary with your water and how the machine is used. The screens here are stylised illustrations.",
+} as const;
+
 /* ─────────────────────────────── Footer ───────────────────────────────── */
 
 export const disclaimer =

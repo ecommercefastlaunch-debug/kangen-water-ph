@@ -4,6 +4,7 @@ import { FAQ } from "@/components/FAQ";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { ProductDetails } from "@/components/ProductDetails";
+import { TechnologySection } from "@/components/technology/TechnologySection";
 
 export default function Home() {
   return (
@@ -11,6 +12,7 @@ export default function Home() {
       <Header />
       <main id="main">
         <K8Experience />
+        <TechnologySection />
         <BookingSection />
         <FAQ />
         <ProductDetails />

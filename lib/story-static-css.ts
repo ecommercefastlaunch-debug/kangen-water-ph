@@ -7,7 +7,7 @@
 export const STORY_STATIC_CSS = `
 .story-track{height:auto}
 .story-pin{position:relative;height:auto;overflow:visible}
-.scene-stage{position:relative;inset:auto;height:min(72svh,640px)}
+.scene-stage{position:relative;inset:auto;height:min(72svh,640px);overflow:hidden}
 .scene-anchor{left:50%;top:52%;transform:none}
 .chapters{position:relative;inset:auto;height:auto;pointer-events:auto}
 .chapters-scrim,.ph-layer,.scene-canvas,.scene-pause,.scene-proxy-note{display:none}

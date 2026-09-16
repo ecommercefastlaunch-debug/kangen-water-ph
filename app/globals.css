@@ -372,6 +372,312 @@ body {
   font-weight: 600;
 }
 
+/* ───────────────────────────── Technology rows ────────────────────────── */
+
+/*
+ * Eight rows: copy on the left, its illustration on the right. On wide
+ * screens each illustration stays with its copy while that row passes, so
+ * the reader never loses the pairing. Items rise in once (data-visible) and
+ * the row being read is marked (data-current). The static mode in
+ * lib/technology-static-css.ts undoes all of it.
+ */
+.tech-grid {
+  display: grid;
+  gap: 4.5rem;
+  list-style: none;
+}
+
+.tech-row {
+  display: grid;
+  gap: 2rem;
+}
+
+.tech-item {
+  opacity: 0;
+  transform: translate3d(0, 26px, 0);
+  transition:
+    opacity 700ms var(--ease-out),
+    transform 700ms var(--ease-out);
+}
+
+.tech-item[data-visible] {
+  opacity: 1;
+  transform: none;
+}
+
+.tech-index {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--color-mute);
+}
+
+.tech-index-num {
+  color: var(--color-glacier);
+  font-variant-numeric: tabular-nums;
+}
+
+.tech-headline {
+  margin-top: 0.9rem;
+  font-size: clamp(1.75rem, 3.4vw, 2.75rem);
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  font-weight: 600;
+  color: var(--color-ink);
+  text-wrap: balance;
+}
+
+.tech-body {
+  margin-top: 1rem;
+  max-width: 34rem;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: var(--color-ink-soft);
+}
+
+.tech-panel-wrap {
+  opacity: 0;
+  transition: opacity 700ms var(--ease-out);
+}
+
+.tech-item[data-visible] ~ .tech-panel-wrap,
+.tech-row:has([data-visible]) .tech-panel-wrap {
+  opacity: 1;
+}
+
+/* ── The illustrations ── */
+
+.tech-card {
+  margin: 0;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  background: var(--color-paper);
+  padding: 1.75rem;
+}
+
+.tech-screen {
+  border-radius: var(--radius-sm);
+  background: var(--color-graphite);
+  color: var(--color-on-dark);
+  padding: 1.25rem 1.25rem 1rem;
+  text-align: center;
+}
+
+.tech-screen-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.tech-screen-line {
+  margin-top: 0.4rem;
+  font-size: 0.8125rem;
+  color: var(--color-on-dark-mute);
+}
+
+.tech-screen-line:first-of-type {
+  margin-top: 1.6rem;
+}
+
+.tech-screen-footer {
+  margin-top: 1.5rem;
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-on-dark-mute);
+}
+
+.tech-screen-rows {
+  margin-top: 1.25rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.tech-screen-rows > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  border-top: 1px solid rgb(255 255 255 / 0.12);
+  padding-top: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.tech-screen-rows dt {
+  color: var(--color-on-dark-mute);
+}
+
+.tech-tiles {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+  list-style: none;
+}
+
+.tech-tile {
+  border: 1px solid rgb(255 255 255 / 0.16);
+  border-radius: 8px;
+  padding: 0.55rem 0.4rem;
+  font-size: 0.75rem;
+  color: var(--color-on-dark);
+}
+
+.tech-tile:last-child:nth-child(odd) {
+  grid-column: span 2;
+}
+
+.tech-steps {
+  display: grid;
+  gap: 0.85rem;
+  list-style: none;
+  counter-reset: none;
+}
+
+.tech-steps li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  font-size: 0.9375rem;
+  color: var(--color-ink);
+}
+
+.tech-step-index {
+  flex: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--color-ice-soft);
+  color: var(--color-glacier);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.tech-stat {
+  font-size: clamp(2.5rem, 6vw, 3.75rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.tech-stat-unit {
+  display: block;
+  margin-top: 0.45rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--color-mute);
+}
+
+.tech-rows {
+  margin-top: 1.5rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.tech-rows > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  border-top: 1px solid var(--color-line);
+  padding-top: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.tech-rows dt {
+  color: var(--color-mute);
+}
+
+.tech-rows dd {
+  color: var(--color-ink);
+}
+
+.tech-quote {
+  font-size: clamp(1.375rem, 3vw, 1.875rem);
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+}
+
+.tech-rows-plain {
+  margin-top: 1.25rem;
+  display: grid;
+  gap: 0.35rem;
+  list-style: none;
+  font-size: 0.875rem;
+  color: var(--color-mute);
+}
+
+.tech-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem 1rem;
+  list-style: none;
+  font-size: 0.9375rem;
+  color: var(--color-ink);
+}
+
+.tech-caption {
+  margin-top: 1rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--color-mute);
+}
+
+.tech-note {
+  margin-top: 3.5rem;
+  max-width: 44rem;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--color-mute);
+}
+
+@media (min-width: 1024px) {
+  .tech-grid {
+    gap: 0;
+  }
+
+  /*
+   * One row per screen: a single item is read at a time. Both cells stick to
+   * the same line, so a row's copy and its illustration always sit level
+   * with each other, then hand over together to the next row.
+   */
+  .tech-row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: 5rem;
+    align-items: start;
+    /*
+     * Taller than a screen, so a row has left before the next one's copy
+     * arrives: only one item is on screen at a time. Both cells stick to the
+     * same line, so copy and illustration stay level with each other.
+     */
+    min-height: 124svh;
+  }
+
+  .tech-item,
+  .tech-panel-wrap {
+    position: sticky;
+    top: calc(var(--header-h) + 10svh);
+    padding-block: 0;
+    /* Reserve the reading band, so the next row cannot rise into it. */
+    min-height: 58svh;
+  }
+
+  .tech-panel-wrap {
+    justify-self: end;
+    width: min(100%, 30rem);
+  }
+
+  /* The first row begins right under the heading, with no empty screen between. */
+  .tech-row:first-child {
+    min-height: 104svh;
+  }
+}
+
 .chapters {
   position: absolute;
   inset: 0 0 auto;
